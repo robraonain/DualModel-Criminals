@@ -1,0 +1,586 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{caption}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Attribution of undesirable character traits, rather than trait-based dehumanization, predicts punishment decisions},
+  pdfauthor={Robert A. Brennan\^{}1, Florence E. Enock\^{}\{1,2\}, \& Harriet Over\^{}1},
+  colorlinks=true,
+  linkcolor={black},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Attribution of undesirable character traits, rather than trait-based dehumanization, predicts punishment decisions}
+\author{Robert A. Brennan\(^1\), Florence E. Enock\(^{1,2}\), \& Harriet Over\(^1\)}
+\date{}
+
+\begin{document}
+\maketitle
+
+\(^1\)Department of Psychology, University of York, York, UK. YO10 5DD\\
+\(^2\)The Alan Turing Institute, British Library, 96 Euston Road, London, UK. NW1 2DB
+
+Address for correspondence: Robert A. Brennan, \url{rb1733@york.ac.uk}
+
+\hypertarget{abstract}{%
+\section{Abstract}\label{abstract}}
+
+The construct of dehumanization is often invoked to explain intergroup harm. In key evidence for this claim, Bastian, Denson, \& Haslam (\protect\hyperlink{ref-Bastian2013}{2013}) reported that the extent to which participants dehumanized criminals by denying them uniquely human character traits such as refinement, rationality and morality predicted the severity of the punishment participants endorsed for them. We revisit this influential finding across six highly powered and preregistered studies. In Studies 1A and 1B, we conceptually replicate Bastian and colleagues' effects, demonstrating that our method is sensitive to detecting relationships between trait-based dehumanization and punishment should they occur. In subsequent studies, we investigate whether the apparent relationship between trait-based dehumanization and punishment is driven by the desirability of the traits incorporated into the stimulus set, their perceived humanness, or both. Whereas Bastian et al.~asked participants to rate the extent to which criminals possessed uniquely human traits that were socially desirable, we asked participants to rate the extent to which criminals possessed uniquely human traits that were both socially desirable (e.g., cultured, civilised) and socially undesirable (e.g., arrogant, bitter). Correlational (studies 2A and 2B) and experimental (studies 3A and 3B) evidence converge on the conclusion that apparent evidence for the relationship between trait-based dehumanization and punishment is better explained by the extent to which participants attribute socially desirable attributes to criminals rather than the extent to which they attribute uniquely human attributes to criminals. Taken together, these studies cast doubt on the hypothesised causal relationship between trait-based dehumanization and harm, at least in this context.
+
+\emph{Keywords}: dehumanization, harm, intergroup bias, punishment, social cognition, trait attribution
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Understanding the motivations that lead to intergroup harm has been a driving force behind social psychology since its conception (\protect\hyperlink{ref-Farr1996}{Farr, 1996}; \protect\hyperlink{ref-Gaines1995}{Gaines \& Reed, 1995}). Many psychological processes have been shown to exacerbate outgroup derogation, including prejudicial attitudes and stereotyping (\protect\hyperlink{ref-Dovidio2010}{Dovidio, Hewstone, Glick, \& Esses, 2010}; \protect\hyperlink{ref-Major2009}{Major \& Sawyer, 2009}). Over the last 25 years, an increasing body of research has investigated the extent to which a psychological process of dehumanization increases the risk of intergroup harm (\protect\hyperlink{ref-Bloom2022}{Bloom, 2022}; \protect\hyperlink{ref-Giner-Sorolla2021}{Giner-Sorolla, Burgmer, \& Demir, 2021}; \protect\hyperlink{ref-Goldenberg2021}{Goldenberg, Courtney, \& Felig, 2021}; \protect\hyperlink{ref-Lang2010}{Lang, 2010}, \protect\hyperlink{ref-Lang2020}{2020}; \protect\hyperlink{ref-Manne2018}{Manne, 2018}; \protect\hyperlink{ref-Over2020a}{Over, 2020a}, \protect\hyperlink{ref-Over2020b}{2020b}; \protect\hyperlink{ref-Rai2017}{Rai, Valdesolo, \& Graham, 2017}; \protect\hyperlink{ref-Ruiter2022}{Ruiter, 2022}; \protect\hyperlink{ref-Smith2021}{Smith, 2021}; \protect\hyperlink{ref-Vaes2020}{Vaes, Paladino, \& Haslam, 2020}). According to the dehumanization hypothesis, when members of an outgroup are perceived as less human than ingroup members, they are at greater risk of harm (\protect\hyperlink{ref-Haslam2019}{Haslam, 2019}; \protect\hyperlink{ref-Haslam2014}{Haslam \& Loughnan, 2014}, \protect\hyperlink{ref-Haslam2015}{2015}; \protect\hyperlink{ref-Smith2011}{Smith, 2012}, \protect\hyperlink{ref-Smith2016}{2016}). Subtle forms of dehumanization are thought to be pervasive in contemporary society. For example, the dehumanization of national groups (\protect\hyperlink{ref-Bain2011}{Bain, Vaes, Kashima, Haslam, \& Guan, 2011}; \protect\hyperlink{ref-Leyens2003}{Leyens et al., 2003}), religious groups (\protect\hyperlink{ref-Banton2020}{Banton, West, \& Kinney, 2020}; \protect\hyperlink{ref-Leidner2013}{Leidner, Castano, \& Ginges, 2013}), individuals on a low income (\protect\hyperlink{ref-Loughnan2013}{Loughnan, Haslam, Sutton, \& Spencer, 2013}), and refugees (\protect\hyperlink{ref-Bruneau2018}{Bruneau, Kteily, \& Laustsen, 2018}; \protect\hyperlink{ref-Esses2008}{Esses, Veenvliet, Hodson, \& Mihic, 2008}) has been reported in the literature.
+
+Within social psychology, several different characterisations of dehumanization have been proposed. Infrahumanization theory (\protect\hyperlink{ref-Leyens2000}{Leyens et al., 2000}, \protect\hyperlink{ref-Leyens2001}{2001}) posits that a subtle form of dehumanization occurs where outgroup members are viewed as experiencing uniquely human emotions such as pride and melancholy to a lesser extent than ingroup members. The mental state account maintains that outgroup members are dehumanized to the extent that they are denied mental states (\protect\hyperlink{ref-Gray2007}{Gray, Gray, \& Wegner, 2007}; \protect\hyperlink{ref-Hare2020}{Hare \& Woods, 2020}; \protect\hyperlink{ref-Harris2006}{Harris \& Fiske, 2006}).
+
+The dual model of dehumanization is of particular interest to the current research (\protect\hyperlink{ref-Haslam2006}{Haslam, 2006}). According to the dual model, individuals and groups are dehumanized to the extent that they are denied uniquely human character traits. The dual model distinguishes between two forms of dehumanization (\protect\hyperlink{ref-Haslam2004}{Haslam, Bastian, \& Bissett, 2004}). When outgroup members are \emph{animalistically dehumanized}, or perceived as similar to animals, they are thought to possess traits such as civility, refinement, rationality, moral sensibility, and maturity to a lesser extent than the ingroup. When outgroup members are \emph{mechanistically dehumanized}, or perceived as similar to robots, they are thought to possess traits such as emotional responsiveness, interpersonal warmth, depth, cognitive openness, and agency to a lesser extent than the ingroup.
+
+According to the dual model, the more an individual or group is either animalistically or mechanistically dehumanized, the greater their risk of being harmed (\protect\hyperlink{ref-Haslam2006}{Haslam, 2006}; \protect\hyperlink{ref-Haslam2014}{Haslam \& Loughnan, 2014}). Haslam \& Loughnan (\protect\hyperlink{ref-Haslam2014}{2014}) argue that ``\emph{dehumanization is important as a psychological phenomenon because it can be so common and yet so dire in its consequences}'' (p.~401). Haslam (\protect\hyperlink{ref-Haslam2021}{2021}) further notes that ``\emph{Many studies have examined how dehumanizing perceptions enable harm or provide support for it. Some of this work points to direct links between tendencies to dehumanize others and\ldots{} aggressive behaviour}'' (pp.~139). Empirical research has suggested that trait-based dehumanization facilitates social exclusion (\protect\hyperlink{ref-Bastian2010}{Bastian \& Haslam, 2010}) and reduces prosocial behaviour (\protect\hyperlink{ref-Andrighetto2014}{Andrighetto, Baldissarri, Lattanzio, Loughnan, \& Volpato, 2014}).
+
+Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}) conducted one of the most prominent empirical studies testing the hypothesised association between the denial of human character traits and harm. The researchers measured how trait-based dehumanization influenced participants' punishment of criminals. Participants were asked to rate their agreement with four items assessing animalistic dehumanization of criminals: ``\emph{I felt like the person in the story was refined and cultured}'' {[}reversed{]}, ``\emph{I felt like the person in the story was rational and logical, like they were intelligent}'' {[}reversed{]} ``\emph{I felt like the person in the story lacked self-restraint, like an animal}'', and ``\emph{I felt like the person in the story was unsophisticated}''. Participants were also asked to rate their agreement with four items assessing mechanistic dehumanization of criminals: ``\emph{I felt like the person in the story was open minded, like they could think clearly about things}'' {[}reversed{]}, ``\emph{I felt like the person in the story was emotional, like they were responsive and warm}'' {[}reversed{]}, ``\emph{I felt like the person in the story was superficial like they had no depth}'', ``\emph{I felt like the person in the story was mechanical and cold, like a robot}''. Bastian and colleagues reported that both forms of dehumanization predicted endorsement of harsh punishment for the criminals portrayed in their stimuli, concluding that their participants viewed criminals as `\emph{subhuman and beastly}' (pp.9).
+
+Recently, however, the explanatory value of the dual model has been called into question (\protect\hyperlink{ref-Enock2021a}{Enock, Tipper, \& Over, 2021}; \protect\hyperlink{ref-Over2020a}{Over, 2020a}, \protect\hyperlink{ref-Over2020b}{2020b}). According to these critiques, evidence for trait-based dehumanization is often confounded with social desirability. In Bastian and colleagues' work, evidence that criminals were animalistically dehumanized was drawn from the observation that participants judged them to be unsophisticated, lacking self-restraint, unrefined, uncultured, irrational, and unintelligent. Evidence that criminals were mechanistically dehumanized came from the observation that participants viewed them as superficial, cold, and lacking in warmth and responsiveness. These results may reflect dehumanization because the traits criminals were found to lack are those perceived as uniquely or essentially human (\protect\hyperlink{ref-Haslam2006}{Haslam, 2006}; \protect\hyperlink{ref-Haslam2004}{Haslam et al., 2004}). However, as the traits deemed uniquely humans were all socially desirable, it is impossible to separate evidence for trait-based dehumanization from evidence for negative evaluation more generally. An alternative explanation for the findings from Bastian and colleagues is that participants endorse harsh punishment against criminals to the extent they perceive criminals to possess undesirable or antisocial characteristics.
+
+One way to de-confound evidence for trait-based dehumanization from evidence of negative evaluation is to ask participants to rate the target group on traits that are uniquely human but socially undesirable (\protect\hyperlink{ref-Over2020a}{Over, 2020a}, \protect\hyperlink{ref-Over2020b}{2020b}). Previous research has established that undesirable character traits such as jealousy, spite and bitterness are considered unique to humans and socially undesirable (\protect\hyperlink{ref-Enock2021a}{Enock, Tipper, et al., 2021}). Enock and colleagues (\protect\hyperlink{ref-Enock2021a}{2021}) found that whereas participants tend to attribute socially desirable human traits more strongly to the ingroup, they tend to attribute socially undesirable traits more strongly to the outgroup. This result held across three intergroup contexts (see also \protect\hyperlink{ref-Enock2021b}{Enock, Flavell, Tipper, \& Over, 2021}; \protect\hyperlink{ref-Enock2022}{Enock \& Over, 2022}). Enock and colleagues conclude that apparent evidence for trait-based dehumanization may be better explained by intergroup preference. However, it is not yet clear how the attribution of uniquely human character traits relates to harm.
+
+We revisit the hypothesised causal relationship between trait-based dehumanization and harm in the context of endorsing harsh punishment for criminals. In Studies 1A and 1B, we seek to conceptually replicate the key findings of Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}) suggesting that the extent to which participants animalistically (Study 1A) and mechanistically (Study 1B) dehumanize criminals predicts the severity of the punishment participants endorse for them. In Studies 2A and 2B, we adopt a similar design but incorporate socially undesirable traits into our stimulus set. This addition to the design allows us to investigate whether trait-based dehumanization predicts the severity of punishment, undesirable trait attribution predicts the severity of punishment, or both predict the severity of punishment. In Studies 3A and 3B, we seek to investigate a similar question using an experimental design. We present participants with vignettes in which criminals are described using character traits that differ in how socially desirable they are and in whether or not they are unique to humans and measure how these varying descriptions influence participants' parole decisions. This allows us to directly measure whether there is a causal relationship between trait-based dehumanization and punishment.
+
+\hypertarget{methods}{%
+\section{Methods}\label{methods}}
+
+All studies received ethical approval from the Psychology Departmental Ethics Committee University of York. All data collection occurred online, and the studies were created and administered using Qualtrics (\url{https://www.qualtrics.com}). Participants were recruited through the online platform Prolific (\url{https://www.prolific.co}), with an independent sample recruited for each study. Informed consent was obtained at the start of each session according to approved ethical guidelines. Inclusion criteria for each study included adult participants fluent in English who had never been to prison for committing a crime and had a Prolific approval rating of at least 90\% (95\% for Studies 3A and 3B). Increases in Prolific's recommended rate of compensation for participation during data collection meant the reward ranged from approximately £7 per hour in Studies 1A and 1B to approximately £8 in the other four studies. Assumption testing and analyses were conducted using \emph{SPSS} and \emph{RStudio}. All studies were pre-registered on AsPredicted.com before commencing data collection. Links to pre-registration documents, data files, files for computational replication on GitHub, and supplementary materials including the stimuli used for each study can be found at: \url{https://osf.io/d4cvp/?view_only=ccf139206e59471b979f53708595ef05}.
+
+\hypertarget{study-1a}{%
+\section{Study 1A}\label{study-1a}}
+
+Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}) presented evidence that the more participants dehumanize violent criminals, the harsher the punishment participants endorse for them. We sought to test whether we could conceptually replicate this relationship between trait-based dehumanization and punishment using terms very similar to those used by Bastian and colleagues. In study 1A, participants read a series of scenarios describing fictitious criminals and their violent crimes. Following this, participants rated the extent to which the criminals possessed four character traits that distinguish humans from animals (\emph{refined, rational and logical, has a sense of morality} and \emph{civilised}). Following common practice in the field, we refer to these as uniquely human traits. Participants also rated the extent to which criminals possessed four character traits that distinguish humans from machines (\emph{openminded, emotionally responsive, has a depth of character}, and \emph{interpersonally warm}). Following common practice in the field, we refer to these as human nature traits. Participants also responded to an item measuring how harsh they thought the violent criminals' punishment should be. Following Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}), we predicted that the less participants attributed these uniquely human traits to criminals, the harsher the punishment they would recommend for criminals.
+
+\hypertarget{participants}{%
+\subsection{Participants}\label{participants}}
+
+A power analysis using G*Power indicated that a sample size of 89 would allow us to detect a medium effect size (\(f^2\) = 0.15) with an alpha of 0.05 and power of 0.95. A final sample of 100 participants was collected, with 54 identifying as female, 44 as male and 2 as non-binary. Ages ranged from 18 to 63 (\emph{M} = 26.53, \emph{SD} = 8.94). In accordance with our pre-registered exclusion criteria, data submitted by six individuals who failed one or both attention checks (i.e., gave a response more than 20 points away from the instructed end of the scale) were omitted and replaced. Participation took an average of approximately eight minutes.
+
+\hypertarget{materials}{%
+\subsection{Materials}\label{materials}}
+
+\textbf{Vignettes}. All participants responded to the same five vignettes detailing different scenarios involving violent crimes. An effort was made to ensure that all five vignettes were similar in length, degree of detail, and severity of crimes depicted. In each vignette, the target's name and pronouns were gender-neutral, their age and ethnicity were not indicated, and the scenarios depicted were all set in unspecified locations. All vignettes are included in the Supplementary materials. For example: ``\emph{Charlie was arrested after a fight broke out in a pub soon after opening time, apparently triggered by a minor disagreement. Charlie smashed a pint glass and used it to stab another customer. Two additional customers received cuts as they tried to hold Charlie back until the Police arrived}.''
+
+\textbf{Trait attribution}. After reading each vignette, participants responded to items designed to measure trait-based dehumanization, broadly following the procedure of Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}). Participants indicated the extent to which they attributed four uniquely human traits (\emph{refined, rational and logical, has a sense of morality} and \emph{civilised}) and four human nature traits (\emph{openminded, emotionally responsive, has a depth of character}, and \emph{interpersonally warm}) to the criminals depicted. Participants indicated their agreement with each item (e.g., `\emph{I think} {[}e.g., \emph{Charlie}{]} \emph{is refined}') using an unmarked sliding scale from 0 (`\emph{Strongly Disagree}') to 100 (`\emph{Strongly Agree}'), with the sliders initially fixed at the midpoint. According to the dual model, lower scores indicated greater dehumanization of violent criminals. An attention check appeared halfway through the dehumanization items for two criminals (`\emph{Please move the slider all the way to Strongly Agree/Disagree}').
+
+\textbf{Harshness of punishment endorsed}. Using an unmarked sliding scale that ranged from 0 (`\emph{Not at all harsh}') to 100 (`\emph{Very harsh}'), participants were asked to respond to the question `\emph{How harsh do you think the punishment for} {[}e.g., \emph{Charlie}{]} \emph{should be}?'.
+
+\hypertarget{design}{%
+\subsection{Design}\label{design}}
+
+Following Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}), we utilised a within-subjects, correlational design. All participants read the same five vignettes presented in a random order and responded to the same trait attribution and punishment items. Participants' scores for the trait attribution items and the endorsed harshness of punishment item were then averaged across scenarios. The presentation of the items in the trait attribution task was also randomised.
+
+\hypertarget{procedure}{%
+\subsection{Procedure}\label{procedure}}
+
+Participants were informed that the study would examine how social attributions influence our behavioural intentions towards criminals. After providing informed consent, participants answered a few demographic questions and confirmed that they had never been to prison for committing a crime. The first of five vignettes then followed. After reading the vignette, participants were asked to respond to the trait attribution items, followed by the single item asking them to indicate how harshly they thought the criminal should be punished. Participants repeated the above steps for each of the remaining four vignettes. To ensure participants read the stimuli carefully, each vignette remained on the screen for at least 15 seconds.
+
+\hypertarget{results}{%
+\subsection{Results}\label{results}}
+
+\hypertarget{model-1-animalistic-dehumanization-and-punishment}{%
+\subsubsection{Model 1: Animalistic dehumanization and punishment}\label{model-1-animalistic-dehumanization-and-punishment}}
+
+In line with our pre-registered criteria, this analysis omitted two highly influential cases (remaining sample \emph{N} = 98). We first calculated the average attribution score for uniquely human traits and punishment for each participant in the sample. We then conducted a simple linear regression to understand whether the extent to which participants attributed uniquely human traits to criminals predicted the harshness of punishment participants endorsed for them. A significant negative relationship was found, \emph{b} = -0.56 {[}-0.75, -0.37{]}, \emph{t} = -5.93, \emph{p} \textless0.001, see Figure \ref{fig:figure1}. Thus, the more violent criminals were animalistically dehumanized (by being denied uniquely human traits), the harsher the punishment participants endorsed. The model explained approximately 27\% of the variance in the harshness of punishment scores, \(R^2\) = 0.27, \emph{F}(1, 96) = 35.14.
+
+\begin{figure}
+
+{\centering \includegraphics{figures/plot1} 
+
+}
+
+\caption{Results of Study 1. Seemingly in line with Bastian and colleagues (2013), greater animalistic (left) and mechanistic (right) dehumanization of violent criminals (Study 1A, top) and thieves (Study 1B, bottom) was associated with harsher punishment.}\label{fig:figure1}
+\end{figure}
+
+\hypertarget{model-2-mechanistic-dehumanization-and-punishment}{%
+\subsubsection{Model 2: Mechanistic dehumanization and punishment}\label{model-2-mechanistic-dehumanization-and-punishment}}
+
+In line with our pre-registered criteria, seven highly influential were omitted from the analysis (remaining sample \emph{N} = 93). After calculating the average attribution score for human nature traits and punishment for each participant, we conducted a simple linear regression to test attribution of human nature traits predicted the harshness of punishment endorsed for violent criminals. A significant negative relationship was found, \emph{b} = -0.41 {[}-0.57, -0.24{]}, \emph{t} = -4.93, \emph{p} \textless0.001, see Figure \ref{fig:figure1}. This relationship shows that greater mechanistic dehumanization (operationalised as the denial of human nature traits) was associated with the endorsement of harsher punishment. The model explains 21\% of the variance in the harshness of punishment scores, \(R^2\) = 0.21, \emph{F}(1, 91) = 24.29.
+
+\hypertarget{study-1b}{%
+\section{Study 1B}\label{study-1b}}
+
+Study 1B investigates whether the relationship found in Study 1A replicates when participants are asked to judge a different type of criminal activity. In Study 1B, we examined whether animalistic and mechanistic dehumanization, as operationalised by Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}), are associated with the harshness of punishment endorsed for individuals who commit theft. The design, materials and analysis plan were similar to that used in Study 1A, except that the scenarios involved theft rather than violent crime.
+
+\hypertarget{method}{%
+\subsection{Method}\label{method}}
+
+\hypertarget{participants-1}{%
+\subsubsection{Participants}\label{participants-1}}
+
+Based on the same power analysis used in Study 1A, a sample of 100 participants was collected, with 55 identifying as male and 45 as female. Ages ranged from 18 to 57 (\emph{M} = 25.45, \emph{SD} = 8.25). The attention checks in Study 1A were also used in Study 1B. Ten participants failed one or both attention checks, and their data was omitted and replaced as per our pre-registration. Participation took an average of nine minutes.
+
+\hypertarget{materials-1}{%
+\subsubsection{Materials}\label{materials-1}}
+
+The measures of dehumanization and punishment were identical to those used in Study 1A.
+
+\textbf{Vignettes} All participants responded to the same five vignettes, each detailing a crime involving theft (see Supplementary materials). As in Study 1A, an effort was made to ensure the vignettes were similar in structure and amount of detail. Once again, all of the perpetrators had gender-neutral names. An example of one of the theft vignettes is as follows: ``\emph{Until their recent arrest, Charlie had worked as a till operator at a local charity shop supporting individuals experiencing homelessness. Charlie had been stealing cash amounts varying from £5 to £50 from the tills almost daily over a five-year period. Police revealed that Charlie had stolen several thousand pounds from the charity shop while working there}.''
+
+\hypertarget{results-1}{%
+\subsection{Results}\label{results-1}}
+
+\hypertarget{model-1-animalistic-dehumanization-and-punishment-1}{%
+\subsubsection{Model 1: Animalistic dehumanization and punishment}\label{model-1-animalistic-dehumanization-and-punishment-1}}
+
+Seven highly influential cases were omitted from the analysis (remaining sample \emph{N} = 93). We calculated the average attribution scores for uniquely human trait attribution and punishment for each participant and then conducted a simple linear regression to measure whether trait attribution predicted the harshness of punishment endorsed for thieves. As shown in Figure \ref{fig:figure1}, a significant negative relationship was found, \emph{b} =-0.42 {[}-0.64, -0.21{]}, \emph{t} = -3.97, \emph{p} \textless0.001. Thus, greater animalistic dehumanization of thieves was associated with the endorsement of harsher punishment for them. The model explains approximately 15\% of the variance in the harshness of punishment scores, \(R^2\) = 0.15, \emph{F}(1, 91) = 15.75.
+
+\hypertarget{model-2-mechanistic-dehumanization-and-punishment-1}{%
+\subsubsection{Model 2: Mechanistic dehumanization and punishment}\label{model-2-mechanistic-dehumanization-and-punishment-1}}
+
+Eight highly influential cases were omitted from the analysis (remaining sample \emph{N} = 92). After calculating the average score of human trait attribution and punishment, we conducted a simple linear regression to test whether or not human trait attribution predicted the harshness of punishment endorsed for thieves. A significant negative relationship was found, \emph{b} = -0.27 {[}-0.47, -0.08{]}, \emph{t} = -2.77, \emph{p} = 0.007. These data show that greater mechanistic dehumanization is associated with the endorsement of harsher punishment for thieves (see Figure \ref{fig:figure1}). The model explains approximately 8\% of the variance in the harshness of punishment scores, \(R^2\) = 0.08, \emph{F}(1, 90) = 7.65.
+
+\hypertarget{study-2a}{%
+\section{Study 2A}\label{study-2a}}
+
+Study 2A investigated whether apparent evidence for a relationship between trait-based dehumanization and endorsement of harsh punishment for violent criminals remains when controlling for the desirability of the traits. We tested this by introducing character traits perceived as uniquely human yet socially undesirable into the stimulus set (\protect\hyperlink{ref-Enock2021a}{Enock, Tipper, et al., 2021}; \protect\hyperlink{ref-Over2020a}{Over, 2020a}). The dual model predicts that to the extent criminals are denied uniquely human character traits, they will be subjected to harsher punishment. We predict that trait desirability will moderate the relationship between human trait attribution and punishment. More specifically, we predict that the extent to which violent criminals are denied socially desirable character traits, and attributed socially undesirable character traits, will predict harsh punishment.
+
+\hypertarget{method-1}{%
+\subsection{Method}\label{method-1}}
+
+\hypertarget{participants-2}{%
+\subsubsection{Participants}\label{participants-2}}
+
+A power analysis using G*Power indicated that a sample size of 119 would allow us to detect a medium effect size (\(f^2\) = 0.15), with three predictors (trait attribution; trait desirability; attribution*desirability), an alpha of 0.05 and power of 0.95. To counterbalance the sample equally and allow for the exclusion of outliers, a sample of 130 was collected. Within the sample, 66 identified as female, 62 as male, and 2 as non-binary. Ages ranged from 18 to 55 (\(M\) = 28.46, \(SD\) = 9.14). Similar to Studies 1A and 1B, two attention checks were included in this study. As per our preregistered plan, 16 participants failed one or both attention checks; thus, their data were omitted and replaced. Participation took an average of nearly eight minutes.
+
+\hypertarget{design-1}{%
+\subsubsection{Design}\label{design-1}}
+
+This study utilised a mixed design. All participants responded to items designed to measure animalistic dehumanization and mechanistic dehumanization. The desirability of the traits rated by participants was manipulated between subjects: half of the participants rated criminals on the extent to which they possessed socially desirable traits, and half rated criminals on the extent to which they possessed undesirable traits. All participants responded to a single item measuring the harshness of punishment endorsed.
+
+\hypertarget{materials-2}{%
+\subsubsection{Materials}\label{materials-2}}
+
+\textbf{Vignettes}. All participants read the same vignettes describing violent crimes as in Study 1A.
+
+\textbf{Trait attribution}. After reading each vignette, participants responded to an 8-item scale measuring animalistic dehumanization (4 items) and mechanistic dehumanization (4 items) of the criminal portrayed. Participants made trait attributions by indicating their agreement with each item using an unmarked sliding scale ranging from 0 (`\emph{Strongly Disagree}') to 100 (`\emph{Strongly Agree}'), all of which were initially positioned at the scale's midpoint. Depending on the condition, the eight trait items were either socially desirable (\emph{uniquely human: cultured, civilised, sophisticated, moral; human nature: generous, open-minded, warm, kind}) or socially undesirable (\emph{uniquely human: corrupt, controlling, arrogant, bitter; human nature: jealous selfish, spiteful, cruel}). The lower the score, the more participants dehumanize the criminal target by denying them human traits.
+
+\textbf{Harshness of punishment endorsed}. The same single-item scale for measuring the harshness of punishment endorsed in Studies 1A and 1B was employed in Study 2A.
+
+\hypertarget{procedure-1}{%
+\subsubsection{Procedure}\label{procedure-1}}
+
+The procedure in Study 2A mirrored that of Studies 1A and 1B.
+
+\hypertarget{results-2}{%
+\subsection{Results}\label{results-2}}
+
+\hypertarget{model-1-animalistic-dehumanization-and-punishment-2}{%
+\subsubsection{Model 1: Animalistic dehumanization and punishment}\label{model-1-animalistic-dehumanization-and-punishment-2}}
+
+Eight highly influential cases were omitted from the analysis (remaining sample \emph{N} = 122). The regression model tested for a relationship between participants' average scores for uniquely human trait attribution and harshness of punishment endorsed with trait desirability included as a moderator (desirable = 0, undesirable = 1).
+
+The moderated regression showed no significant effect of uniquely human trait attribution on punishment, \(b\) = -0.07 {[}-0.22, 0.09{]}, \(t\) = -0.83, \(p\) = 0.408. Thus, when undesirable uniquely human traits were included in the measure of animalistic dehumanization, the previously reported relationship between animalistic dehumanization and the endorsement of harsher punishment (\protect\hyperlink{ref-Bastian2013}{Bastian et al., 2013}) was no longer significant.
+
+The interaction between uniquely human trait attribution and trait desirability was significant, \(b\) = 1.31 {[}1, 1.63{]}, \(t\) = 8.3, \(p\) = \textless0.001. In line with our prediction, simple slopes showed that the more socially desirable human traits participants attributed to criminals, the less harshly participants thought they should be punished, \(b\) = 0.58, {[}0.39, 0.78{]}, \(t\) = 5.9, \(p\) = \textless0.001. The more undesirable traits participants attributed to criminals, the more harshly participants thought they should be punished, \(b\) = -0.73, {[}-0.98, -0.49{]}, \(t\) = -5.92, \(p\) = \textless0.001 (see Figure \ref{fig:figure2}). The model explained approximately 38\% of the variance in the harshness of punishment endorsed, \(R^2\) = 0.38, \(F\)(3, 118) = 23.61.
+
+\hypertarget{model-2-mechanistic-dehumanization-and-punishment-2}{%
+\subsubsection{Model 2: Mechanistic dehumanization and punishment}\label{model-2-mechanistic-dehumanization-and-punishment-2}}
+
+Eight highly influential cases were omitted from the analysis (remaining sample \emph{N} = 122). A moderated regression analysis tested for a relationship between the average scores of human trait attribution and harshness of punishment endorsed to violent criminals and whether this interacted with trait desirability.
+
+The moderated regression showed no significant effects of human nature trait attribution on punishment, \(b\) = -0.04 {[}-0.19, 0.12{]}, \(t\) = -0.44, \(p\) = 0.658. The effect reported by Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}), whereby mechanistic dehumanization predicted harsher punishment endorsement, which we replicated in Studies 1A and 1B, did not appear when undesirable human nature traits were included in our measures.
+
+The interaction between uniquely human trait attribution and trait desirability was significant, \(b\) = 1.37 {[}1.06, 1.68{]}, \(t\) = 8.65, \(p\) = \textless0.001. Simple slopes indicated that the more participants attributed socially desirable traits to criminals, the less harshly they thought those criminals should be punished \(b\) = -0.73, {[}-0.96, -0.51{]}, \(t\) = -6.46, \(p\) = \textless0.001. As shown in Figure \ref{fig:figure2}, the more participants attributed socially undesirable traits to criminals, the more harshly they thought those criminals should be punished, \(b\) = 0.64, {[}0.42, 0.86{]}, \(t\) = 5.77, \(p\) = \textless0.001. The model explained 39\% of the variance in the harshness of punishment scores, \(R^2\) = 0.39, \(F\)(3, 118) = 25.05.
+
+\begin{figure}
+
+{\centering \includegraphics{figures/plot2} 
+
+}
+
+\caption{Results of Study 2: The relationship between trait attribution and punishment for violent criminals (Study 2A, top) and thieves (Study 2B, bottom) depends on the social desirability of the traits.}\label{fig:figure2}
+\end{figure}
+
+\hypertarget{study-2b}{%
+\section{Study 2B}\label{study-2b}}
+
+Study 2B sought to replicate the results of Study 2A but with thieves as the target group rather than violent criminals. We examined whether the apparent relationship between trait-based dehumanization and the endorsement of harsh punishment for thieves is better explained by the desirability of the traits incorporated into the stimulus set. We investigate this question using a very similar design and procedure to Study 2A, with the exception that the vignettes are those used in Study 1B detailing crimes involving theft. As in Study 2A, we hypothesise that trait desirability will moderate the relationship between human trait attribution and punishment. More specifically, we predict the extent to which criminals are denied socially desirable character traits, and attributed socially undesirable character traits, will predict endorsement of harsher punishment.
+
+\hypertarget{method-2}{%
+\subsection{Method}\label{method-2}}
+
+\hypertarget{participants-3}{%
+\subsubsection{Participants}\label{participants-3}}
+
+The power analysis described in Study 2A informed the sample size for Study 2B. A separate sample of 130 participants was collected, of whom 74 identified as male, 53 as female, and three as non-binary. Ages ranged from 18 to 59 (\emph{M}= 26.5, \emph{SD} = 7.48). Data submitted by 20 participants who did not pass one or both checks were omitted and replaced. Participation took an average of nine and a half minutes.
+
+\hypertarget{design-2}{%
+\subsubsection{Design}\label{design-2}}
+
+This study utilised a mixed-methods design, matching that of Study 2A. The same attention checks used in Studies 1A, 1B and 2A were used in Study 2B.
+
+\hypertarget{materials-3}{%
+\subsubsection{Materials}\label{materials-3}}
+
+\textbf{Vignettes}. All participants responded to the same five vignettes used in Study 1B detailing scenarios involving criminals committing theft.
+
+\textbf{Trait attribution}. The same scales for measuring animalistic dehumanization, mechanistic dehumanization, and punishment used in Study 2A were used in Study 2B.
+
+\hypertarget{procedure-2}{%
+\subsubsection{Procedure}\label{procedure-2}}
+
+The procedure in Study 2B was identical to that of Study 2A, except for the vignettes describing crimes involving theft rather than violence.
+
+\hypertarget{results-3}{%
+\subsection{Results}\label{results-3}}
+
+\hypertarget{model-1-animalistic-dehumanization-and-punishment-3}{%
+\subsubsection{Model 1: Animalistic dehumanization and punishment}\label{model-1-animalistic-dehumanization-and-punishment-3}}
+
+Eight highly influential cases were omitted from the analysis (remaining sample \emph{N} = 122). A moderated regression tested for a relationship between average scores of uniquely human traits and harshness of punishment endorsed and whether this interacted with trait desirability. The moderated regression showed no significant effects of uniquely human trait attribution on punishment \emph{b} = 0.13 {[}-0.05, 0.3{]}, \emph{t} = 1.44, \emph{p} = 0.152. Replicating the results of Study 2A, when socially undesirable traits were incorporated into the stimulus set, there was no longer any relationship between trait-based dehumanization and punishment.
+
+The interaction between uniquely human trait attribution and trait desirability was significant, \emph{b} = 1.08 {[}0.74, 1.42{]}, \emph{t} = 6.21, \emph{p} = \textless0.001. As illustrated in Figure \ref{fig:figure2}, the more participants attributed socially desirable traits to criminals, the less harshly participants felt they should be punished, \emph{b} = -0.43, {[}-0.65, -0.21{]}, \emph{t} = -3.88, \emph{p} = \textless0.001. The more participants attributed undesirable traits to criminals, the more harshly participants felt they should be punished, \emph{b} = 0.65, {[}0.38, 0.91{]}, \emph{t} = 4.85, \emph{p} = \textless0.001. The model explained about 25\% of the variance in endorsed harshness of punishment scores, \(R^2\) = 0.25, \(F\)(3, 118) = 12.88.
+
+\hypertarget{model-2-mechanistic-dehumanization-and-punishment-3}{%
+\subsubsection{Model 2: Mechanistic dehumanization and punishment}\label{model-2-mechanistic-dehumanization-and-punishment-3}}
+
+The analysis omitted six highly influential cases (remaining sample \emph{N} = 124). A regression tested for a relationship between human trait attribution and punishment and whether this interacted with trait desirability. As in Study 2A, and contradicting the findings of Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}), the moderated regression showed no significant relationship between human trait attribution and punishment, \emph{b} = 0.15 {[}-0.04, 0.34{]}, \emph{t} = 1.57, \emph{p} = 0.119.
+
+However, the interaction between human nature trait attribution and trait desirability was significant, \emph{b} = 0.95 {[}0.57, 1.33{]}, \emph{t} = 5, \emph{p} = \textless0.001. As can be seen in Figure \ref{fig:figure2}, simple slopes showed that the more participants attributed socially desirable human traits to criminals, the less harshly participants thought they should be punished, \emph{b} = -0.33, {[}-0.55, -0.11{]}, \emph{t} = -2.99, \emph{p} = 0.003. The more participants attributed socially undesirable human traits to criminals, the more harshly participants thought they should be punished, \emph{b} = 0.62, {[}0.31, 0.92{]}, \emph{t} = 4.01, \emph{p} = \textless0.001. The model explained about 17\% of the variance in endorsed harshness of punishment scores, \(R^2\) = 0.17, \(F\)(3, 120) = 8.44. These data suggest that the apparent relationships between animalistic and mechanistic dehumanization and punishment reported in previous research (\protect\hyperlink{ref-Bastian2013}{Bastian et al., 2013}) are better explained by the social desirability of the traits.
+
+\hypertarget{study-3a}{%
+\section{Study 3A}\label{study-3a}}
+
+In Study 3A, we used an experimental design to examine further the hypothesised causal relationship between trait-based dehumanization and punishment when controlling for the social desirability of human traits incorporated into the stimuli. We described criminals with traits that varied in desirability and perceived humanness creating a \(2 \times 2\) design. We then measured participants' willingness to endorse parole for each criminal described. The dual model predicts that criminals who are described in uniquely human terms will be more likely to be granted parole. We predicted that criminals described in socially desirable terms will be more likely to be granted parole. In principle, this design allows us to detect independent effects of dehumanization and trait sociability or an interaction between the two. In Study 3A, we specifically measure the extent to which animalistic dehumanization is causally related to parole decisions. Thus, we included uniquely human traits and those shared with other animals in our measures. We predict that participants will be more likely to endorse parole for criminals described with socially desirable traits, regardless of whether or not those traits are uniquely human or shared with other animals.
+
+\hypertarget{methods-1}{%
+\subsection{Methods}\label{methods-1}}
+
+\hypertarget{participants-4}{%
+\subsubsection{Participants}\label{participants-4}}
+
+A power analysis using G*Power indicated that a sample size of 135 would allow us to detect a medium effect size (\(\eta_p^2\) = .09) with a \(2 \times 2\) factorial design, an alpha of .05 and a power of .95. To counterbalance the sample equally, a sample of 136 participants was collected, of whom 78 identified as female, 55 as male, 2 as non-binary, and 1 who preferred not to indicate their gender identity. Ages ranged from 18 to 63 (\emph{M} = 24.9, \emph{SD} = 6.97). All participants were adults fluent in English who had never been to prison for committing a crime. Due to a noticeable increase in failed attention checks during pilot data collection, the minimal approval rating on Prolific was raised from 90\% to 95\%. Despite this, data from 46 participants were omitted and replaced due to failed attention checks. Three participants were mistakenly recruited after the intended sample size had been met, and thus, their data were excluded from analyses\footnote{Including data submitted by excess participants in analyses yielded the same results as those reported.}. Participation took an average of seven minutes.
+
+\hypertarget{materials-4}{%
+\subsubsection{Materials}\label{materials-4}}
+
+\textbf{Vignettes}. All participants responded to the same four vignettes, each detailing a different scenario in which a criminal's eligibility for parole was assessed. Efforts were made to ensure that all four vignettes were similar in length, degree of detail, and contextual aspects, such as how long the criminal had spent in prison and who was described as attributing the traits to the criminal. In each vignette, the criminal's name and pronouns were gender-neutral, their age and ethnicity were not indicated, and their crime and sentence were not specified. The four vignettes can be seen in the Supplementary materials. In the uniquely human socially desirable condition, the criminal was described as \emph{cultured, civilised, sophisticated}, and \emph{moral}, while in the uniquely human condition socially undesirable, the criminal was described as \emph{corrupt, controlling, arrogant} and \emph{bitter}. In the animalistic desirable condition, the criminal was described as \emph{energetic, trusting, genuine} and \emph{having curiosity}, while in the animalistic undesirable condition, the criminal was described as \emph{uncultured, unrefined, unsophisticated}, and \emph{stupid}.
+
+The following is an example of a vignette describing a criminal with uniquely human, socially desirable traits: ``\emph{Alex, known by locals in their hometown as having always been sophisticated, has recently begun their first parole hearing at the local courthouse. Having been tried and convicted 36 months ago, a report by one of the prison's counsellors notes that other prisoners often refer to Alex as being civilised and moral in character. Alex was also described by the counsellor as exhibiting a cultured demeanour since their arrival}.''
+
+\textbf{Agreement with parole}. The dependent variable, agreement with granting parole, was measured using the following single-item measure: `\emph{I think (Alex/Sam/Robin/Jamie) should be granted parole}'. This measure appeared after each vignette, and participants indicated their agreement using an unmarked sliding scale ranging from Strongly Disagree (0) to Strongly Agree (100). The slider's initial starting point was always centred at 50.
+
+\textbf{Attention check}. An additional paragraph was included, largely similar to the other four paragraphs, describing a criminal named Charlie. However, in the middle of the paragraph, the following sentence was included: `\emph{This paragraph is an attention check: please move the slider all the way to Strongly Disagree on the left-hand side}'. Data submitted by any participants who did not respond within 20 points of the instructed end of the 100-point scale were omitted and replaced.
+
+\hypertarget{design-3}{%
+\subsubsection{Design}\label{design-3}}
+
+This study adopted a 2(trait humanness: uniquely human, shared) \(\times\) 2(trait desirability: desirable, undesirable) within-subjects factorial design. Counterbalancing ensured that each vignette was associated with each trait category an equal number of times across the participant sample, resulting in four trait-type orders. The trait words were randomly allocated to the position in which they appeared in each vignette using a random order function in Excel. Mirror versions of the trait orders were then created. These two trait-order conditions were also counterbalanced between participants, which was done to control for possible primacy and recency effects of the order in which traits appeared.
+
+\hypertarget{procedure-3}{%
+\subsubsection{Procedure}\label{procedure-3}}
+
+After participants provided informed consent, they responded to the same demographic questions and inclusion checks as in the other studies. Participants were then shown the first of the four vignettes. After reading the vignette, participants were asked to respond to a single item measuring their agreement with granting parole to the criminal depicted. Participants then repeated the above steps for the remaining three vignettes. The order in which the vignettes were presented to participants was randomised. Each vignette appeared on the screen for at least 15 seconds to maximise the chance that participants read all the relevant information. Participants were debriefed and redirected to Prolific to collect their reward after completing the questionnaire.
+
+\hypertarget{results-4}{%
+\subsection{Results}\label{results-4}}
+
+A \(2 \times 2\) within-subjects ANOVA was conducted to examine how variations in the desirability (desirable or undesirable) and humanness (uniquely human or shared with other animals) of the traits used to describe criminals influenced participants' agreement with granting them parole. In line with our prediction, a significant main effect of trait desirability was found, \emph{F}(1, 135) = 369.43, \emph{p} = \textless0.001, \(\eta_{p}^{2}\) = .732. Criminals described with socially undesirable traits (\emph{M} = 38.82, \emph{SE} = 1.72) were less likely to be granted parole than were those described with desirable traits (\emph{M} = 77.8, \emph{SE} = 1.44); see Figure \ref{fig:figure3}. A main effect of trait humanness was also found, \emph{F}(1, 135) = 51.62, \emph{p} = \textless0.001, \(\eta_{p}^{2}\) = .277. Contrary to the predictions of the dual model, however, criminals who were described with uniquely human traits (\emph{M} = 53, \emph{SE}= 1.36) were less likely to be granted parole than those described with traits shared with other animals (\emph{M} = 63.7, \emph{SE} = 1.5). A significant interaction effect between trait humanness and trait desirability was also found, \emph{F}(1, 135) = 54.67, \emph{p} = \textless0.001, \(\eta_{p}^{2}\) = .288. Criminals described using undesirable uniquely human traits (\emph{M} = 27.9, \emph{SE} = 1.93) were less likely to be granted parole than were criminals described using desirable uniquely human traits (\emph{M} = 78, \emph{SE} = 1.7), \emph{F}(1, 135) = 430.39, \emph{p} = \textless0.001, \(\eta_{p}^{2}\) = .761. Similarly, criminals described using undesirable traits shared with other species (\emph{M} = 49.8, \emph{SE}= 2.32) less likely to be granted parole than were those described using desirable traits shared with other species (\emph{M} = 77.6, \emph{SE} = 1.6), \emph{F}(1, 135) = 111.62, \emph{p} = \textless0.001, \(\eta_{p}^{2}\) = .453.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{figures/plot3} 
+
+}
+
+\caption{Results of Studies 3A and 3B.  Criminals described with undesirable traits were less likely to be granted parole than were those described with desirable traits, regardless of whether or not those traits were uniquely human.}\label{fig:figure3}
+\end{figure}
+
+\hypertarget{study-3b}{%
+\section{Study 3B}\label{study-3b}}
+
+Study 3B had an extremely similar design and method to Study 3A. We again employed an experimental manipulation in which we manipulated the perceived humanness and sociality of the traits with which criminals were described and measured how these descriptions influenced participants' parole decisions. In study 3B, we specifically tested for an influence of mechanistic dehumanization by including human nature traits and traits shared with robots in our measures.
+
+As in Study 3A, we predicted that criminals described with undesirable traits would be less likely to be granted parole than those described using desirable traits.
+
+\hypertarget{methods-2}{%
+\subsection{Methods}\label{methods-2}}
+
+\hypertarget{participants-5}{%
+\subsubsection{Participants}\label{participants-5}}
+
+The power analysis described in Study 3A also informed the sample size for Study 3B. A new sample of 136 participants was collected, of whom 76 identified as female, 56 as male, 3 as non-binary, and 1 did not indicate their gender identity. Ages ranged from 18 to 57 (\emph{M} = 26.4, \emph{SD} = 8.32). The inclusion criteria were identical to those used in Study 3A, including a minimum Prolific approval rating of 95\%. Data from 35 participants were omitted and replaced due to failed attention checks. Five participants were mistakenly recruited after the intended sample size had been met, and thus, their data were excluded from analyses. Participation took an average of just under 7 minutes.
+
+\hypertarget{materials-5}{%
+\subsubsection{Materials}\label{materials-5}}
+
+The agreement with granting parole scale and attention check were the same as those used in Study 3A.
+
+\textbf{Vignettes}. All participants responded to the same four vignettes used in Study 3A but with somewhat different trait words. The desirable human words were \emph{generous, openminded, warm}, and \emph{kind}. The undesirable human words were \emph{jealous, selfish, spiteful}, and \emph{stingy}. The desirable traits shared with robots were \emph{helpful, disciplined, calm} and \emph{efficient}. The undesirable traits shared with robots were \emph{cold, inflexible, superficial}, and \emph{passive}. The following vignette is an example from the undesirable shared condition:
+``\emph{Sam is currently applying for parole after being convicted of a crime just over three years ago. In assessing Sam's suitability, the parole committee gathered reports from prison staff and other inmates. Guards patrolling the prison grounds noted Sam as being passive. Other prisoners mention Sam as exhibiting superficial behaviour with them for the most part. The prisoner who shares a cell with Sam has referred to them as the most inflexible cell-mate they have ever had. In last week's parole hearing, Sam's responses indicated a cold character}.''
+
+\hypertarget{design-and-procedure}{%
+\subsubsection{Design and procedure}\label{design-and-procedure}}
+
+The design and procedure were identical to that of study 3A.
+
+\hypertarget{results-5}{%
+\subsection{Results}\label{results-5}}
+
+A \(2 \times 2\) within-subjects ANOVA was conducted to examine how variations in trait humanness (human or shared with robots) and trait desirability (desirable or undesirable) influenced participants' parole decisions. As illustrated in Figure \ref{fig:figure3}, a significant main effect of trait desirability was found, \emph{F}(1, 135) = 409.59, \emph{p} = \textless0.001, \(\eta_{p}^{2}\) = .752. Criminals described using undesirable traits (\emph{M} = 38.9, \emph{SE} = 1.82) were less likely to be granted parole than were criminals described using desirable traits (\emph{M} = 80.6, \emph{SE} = 1.44).
+
+No significant main effect of trait humanness was found, \emph{F}(1, 135) = 2.78, \emph{p} = .098, \(\eta_{p}^{2}\) = .020. Participants were no more likely to grant parole to criminals who were described using human traits (\emph{M} = 58.6, \emph{SE} = 1.53) than those described using traits shared with robots (\emph{M} = 60.8, \emph{SE} = 1.33). Unlike in Study 3A, no interaction effect between trait humanness and trait desirability was found, \emph{F}(1, 135) = 2.49, \emph{p} = .117, \(\eta_{p}^{2}\) = .018.
+
+\hypertarget{general-discussion}{%
+\section{General Discussion}\label{general-discussion}}
+
+Across six highly powered and preregistered studies, we examined the hypothesised causal relationship between trait-based dehumanization and harm. The dual model of dehumanization (\protect\hyperlink{ref-Haslam2006}{Haslam, 2006}) posits that individuals and groups are sometimes subtly dehumanized by being denied human character traits. To the extent that groups are dehumanized in this way, they are thought to be vulnerable to harm (see \protect\hyperlink{ref-Haslam2019}{Haslam, 2019}; \protect\hyperlink{ref-Haslam2015}{Haslam \& Loughnan, 2015}). The work of Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}) is often cited in support of this claim. Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}) reported that the fewer human traits participants attributed to criminals, the harsher the punishments participants endorsed for them.
+
+We initially sought to replicate the dehumanization effect reported by Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}) in a conceptually similar design. In Study 1A, we examined the relationship between animalistic and mechanistic dehumanization, as operationalised by Bastian and colleagues, and the harshness of punishment endorsed by participants. In both studies, we successfully replicated previous findings. This demonstrates that our paradigm is sensitive to finding predictive relationships between trait-based dehumanization and harm should they occur.
+
+In Studies 2A and 2B, we investigated the extent to which the previously reported relationship between trait-based dehumanization and harm can be explained by the social desirability of the traits incorporated into the stimulus set. The dual model (\protect\hyperlink{ref-Haslam2006}{Haslam, 2006}) has previously been critiqued for failing to clearly distinguish evidence for trait-based dehumanization from evidence of negative evaluation (\protect\hyperlink{ref-Bloom2022}{Bloom, 2022}; \protect\hyperlink{ref-Enock2021a}{Enock, Tipper, et al., 2021}; \protect\hyperlink{ref-Over2020a}{Over, 2020a}, \protect\hyperlink{ref-Over2020b}{2020b}). Bastian and colleagues (\protect\hyperlink{ref-Bastian2013}{2013}) operationalised animalistic dehumanization as a reduction in the extent to which participants viewed criminals as possessing traits such as sophistication and refinement. They operationalised mechanistic dehumanization as a reduction in the extent to which participants viewed criminals as possessing traits like warmth and depth. As each of these human traits is socially desirable, it is impossible to determine whether harm is predicted by dehumanization or negative evaluation. In order to tease apart the influence of dehumanization and negative evaluation in harm, we incorporated undesirable human traits into our stimulus set, for example, bitter and spiteful. If trait-based dehumanization explains harm, the previously reported relationship between dehumanization and punishment should remain even when undesirable human traits are incorporated into the stimulus set. If the previously reported relationship is better explained by negative evaluation, then trait desirability should moderate the relationship with punishment. In support of the latter claim, Studies 2A and 2B showed that the more desirable human traits participants attributed to criminals, the less harshly participants thought they should be punished. The more undesirable human traits participants attributed to criminals, the more harshly participants thought they should be punished.
+
+In Study 3, we sought to further distinguish between these two competing hypotheses using an experimental manipulation. In Studies 3A and 3B, we described criminals in traits that varied in perceived humanness and sociality and measured the influence of these varying descriptions on participants' parole decisions. This experimental design allowed us to directly test the hypothesised causal relationship between trait-based dehumanization and punishment. Converging with the findings of Study 2, we found that criminals described with undesirable traits were less likely to be granted parole than were criminals described with desirable traits, regardless of whether or not those traits were uniquely human. There was no evidence for the hypothesis that criminals described with uniquely human terms would be more likely to be granted parole.
+
+These findings fit with broader critiques of social psychological models of dehumanization. Enock and colleagues (\protect\hyperlink{ref-Enock2021a}{2021}) showed that what appears to be evidence for trait-based dehumanization of immigrants and political groups is better explained by negative evaluation. Similarly, Enock, Flavell, et al. (\protect\hyperlink{ref-Enock2021b}{2021}) presented evidence that what appears to be emotion-based dehumanization of seven different outgroups is better explained by negative evaluation. In these studies, participants were more likely to attribute prosocial emotions to the ingroup regardless of whether they were uniquely human or not. Participants were more likely to attribute antisocial emotions to the outgroup, regardless of whether they were uniquely human or not. In further work, Enock \& Over (\protect\hyperlink{ref-Enock2022}{2022}) presented evidence that the apparent relationship between emotion-based dehumanization and reductions in prosocial behaviour is better explained by negative evaluation.
+
+Partially in response to these critiques, Kteily \& Landry (\protect\hyperlink{ref-Kteily2022}{2022}) presented a new social psychological model of dehumanization in which to dehumanize an individual or group is to perceive them as less than the ideal human. Under this characterisation of dehumanization, to view a group as possessing negative attributes is to dehumanize them. However, to define dehumanization in such a broad way as any negative evaluation renders almost all social judgments dehumanizing (\protect\hyperlink{ref-Bloom2022}{Bloom, 2022}). It seems unlikely that we dehumanize our closest and most loved kin simply by perceiving their imperfections. It is crucial that future conceptual research on dehumanization more clearly delineates dehumanization from negative evaluation (\protect\hyperlink{ref-Bloom2022}{Bloom, 2022}; \protect\hyperlink{ref-Over2020a}{Over, 2020a}, \protect\hyperlink{ref-Over2020b}{2020b}).
+
+It is important to acknowledge that we considered only one target group in this study - criminals. We based this decision on the influence the findings of Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}) have had on the literature. However, there may be more evidence for the hypothesised causal relationship between trait-based dehumanization and harm in other intergroup contexts. In addition to examining additional intergroup contexts, future research should also incorporate more trait terms into stimulus sets. Research on dehumanization has been critiqued for using relatively small stimulus sets (\protect\hyperlink{ref-Vaes2023}{Vaes, 2023}). Indeed, some studies have used a single trait term to assess dehumanization. For example, Leidner et al. (\protect\hyperlink{ref-Leidner2013}{2013}) measured dehumanization by asking participants to rate the extent to which they agreed that members of the target outgroup experienced compassion. It will always remain possible that evidence for the causal relationship between dehumanization and harm could be found with a more sensitive paradigm.
+
+We are not trying to argue that trait-based dehumanization never occurs. Rather, our argument is considerably more modest. Taken in conjunction with other recent results, it is apparent that evidence for trait-based dehumanization has often been confounded with evidence for negative evaluation (\protect\hyperlink{ref-Bloom2022}{Bloom, 2022}; \protect\hyperlink{ref-Enock2021b}{Enock, Flavell, et al., 2021}; \protect\hyperlink{ref-Enock2021a}{Enock, Tipper, et al., 2021}; \protect\hyperlink{ref-Over2020a}{Over, 2020a}, \protect\hyperlink{ref-Over2020b}{2020b}). The results of the current study add to this growing body of critiques by showing that the findings of Bastian et al. (\protect\hyperlink{ref-Bastian2013}{2013}), often cited as key evidence for the claim that trait-based dehumanization leads to harm, are considerably less convincing than they first appear. It is imperative that future research tests whether there is evidence for trait-based dehumanization when trait desirability is controlled for, given the grave importance of understanding predictors of intergroup harm in the real world.
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-Andrighetto2014}{}}%
+Andrighetto, L., Baldissarri, C., Lattanzio, S., Loughnan, S., \& Volpato, C. (2014). Human-itarian aid? Two forms of dehumanization and willingness to help after natural disasters. \emph{British Journal of Social Psychology}, \emph{53}(3), 573--584. \url{https://doi.org/10.1111/BJSO.12066}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Bain2011}{}}%
+Bain, P., Vaes, J., Kashima, Y., Haslam, N., \& Guan, Y. (2011). Folk conceptions of humanness: Beliefs about distinctive and core human characteristics in australia, italy, and china. \emph{Journal of Cross-Cultural Psychology}, \emph{43}(1), 53--58. \url{https://doi.org/10.1177/0022022111419029}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Banton2020}{}}%
+Banton, O., West, K., \& Kinney, E. (2020). The surprising politics of anti-immigrant prejudice: How political conservatism moderates the effect of immigrant race and religion on infrahumanization judgements. \emph{British Journal of Social Psychology}, \emph{59}(1), 157--170. \url{https://doi.org/10.1111/BJSO.12337}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Bastian2013}{}}%
+Bastian, B., Denson, T. F., \& Haslam, N. (2013). The roles of dehumanization and moral outrage in retributive justice. \emph{PLoS ONE}, \emph{8}(4). \url{https://doi.org/10.1371/journal.pone.0061842}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Bastian2010}{}}%
+Bastian, B., \& Haslam, N. (2010). Excluded from humanity: The dehumanizing effects of social ostracism. \emph{Journal of Experimental Social Psychology}, \emph{46}(1), 107--113. \url{https://doi.org/10.1016/j.jesp.2009.06.022}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Bloom2022}{}}%
+Bloom, P. (2022). If everything is dehumanization, then nothing is. \emph{Trends in Cognitive Sciences}, \emph{26}(7), 539. \url{https://doi.org/10.1016/J.TICS.2022.03.001}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Bruneau2018}{}}%
+Bruneau, E., Kteily, N., \& Laustsen, L. (2018). The unique effects of blatant dehumanization on attitudes and behavior towards muslim refugees during the european {``refugee crisis''} across four countries. \emph{European Journal of Social Psychology}, \emph{48}(5), 645--662. \url{https://doi.org/10.1002/EJSP.2357}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Dovidio2010}{}}%
+Dovidio, J. F., Hewstone, M., Glick, P., \& Esses, V. M. (2010). The SAGE handbook of prejudice, stereotyping and discrimination. \emph{The SAGE Handbook of Prejudice, Stereotyping and Discrimination}, 1--663. \url{https://doi.org/10.4135/9781446200919}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Enock2021b}{}}%
+Enock, F. E., Flavell, J. C., Tipper, S. P., \& Over, H. (2021). No convincing evidence outgroups are denied uniquely human characteristics: Distinguishing intergroup preference from trait-based dehumanization. \emph{Cognition}, \emph{212}, 1--73. \url{https://doi.org/10.1016/j.cognition.2021.104682}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Enock2022}{}}%
+Enock, F. E., \& Over, H. (2022). Reduced helping intentions are better explained by the attribution of antisocial emotions than by {``infrahumanization.''} \emph{Scientific Reports}, \emph{12}(1), 1--14. \url{https://doi.org/10.1038/s41598-022-10460-0}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Enock2021a}{}}%
+Enock, F. E., Tipper, S. P., \& Over, H. (2021). Intergroup preference, not dehumanization, explains social biases in emotion attribution. \emph{Cognition}, \emph{216}. \url{https://doi.org/10.1016/j.cognition.2021.104865}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Esses2008}{}}%
+Esses, V. M., Veenvliet, S., Hodson, G., \& Mihic, L. (2008). Justice, morality, and the dehumanization of refugees. \emph{Social Justice Research}, \emph{21}(1), 4--25. \url{https://doi.org/10.1007/s11211-007-0058-4}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Farr1996}{}}%
+Farr, R. M. (1996). \emph{The roots of modern social psychology, 1872--1954}. Blackwell publishing.
+
+\leavevmode\vadjust pre{\hypertarget{ref-Gaines1995}{}}%
+Gaines, S. O., \& Reed, E. S. (1995). Prejudice: From allport to DuBois. \emph{American Psychologist}, \emph{50}(2), 96--103. \url{https://doi.org/10.1037/0003-066X.50.2.96}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Giner-Sorolla2021}{}}%
+Giner-Sorolla, R., Burgmer, P., \& Demir, N. (2021). Commentary on over (2021): Well-taken points about dehumanization, but exaggeration of challenges. \emph{Perspectives on Psychological Science}, \emph{16}(1), 24--27. \url{https://doi.org/10.1177/1745691620953788}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Goldenberg2021}{}}%
+Goldenberg, J. L., Courtney, E. P., \& Felig, R. N. (2021). Supporting the dehumanization hypothesis, but under what conditions? A commentary on over (2021). \emph{Perspectives on Psychological Science}, \emph{16}(1), 14--21. \url{https://doi.org/10.1177/1745691620917659}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Gray2007}{}}%
+Gray, H. M., Gray, K., \& Wegner, D. M. (2007). Dimensions of mind perception. \emph{Science}, \emph{315}(5812), 619. \url{https://doi.org/10.1126/SCIENCE.1134475}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Hare2020}{}}%
+Hare, B., \& Woods, V. (2020). \emph{Survival of the friendliest: Understanding our origins and rediscovering our common humanity}. Random House.
+
+\leavevmode\vadjust pre{\hypertarget{ref-Harris2006}{}}%
+Harris, L. T., \& Fiske, S. T. (2006). Dehumanizing the lowest of the low: Neuroimaging responses to extreme out-groups. \emph{Psychological Science}, \emph{17}(10), 847--853. \url{https://doi.org/10.1111/J.1467-9280.2006.01793.X}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Haslam2006}{}}%
+Haslam, N. (2006). Dehumanization: An integrative review. \emph{Personality and Social Psychology Review}, \emph{10}(3), 252--264. \url{https://doi.org/10.1207/s15327957pspr1003_4}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Haslam2019}{}}%
+Haslam, N. (2019). The many roles of dehumanization in genocide. \emph{Confronting Humanity at Its Worst}, 119--138. \url{https://doi.org/10.1093/OSO/9780190685942.003.0005}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Haslam2021}{}}%
+Haslam, N. (2021). The social psychology of dehumanization. In M. K (Ed.), \emph{The routledge handbook of dehumanization}. \url{https://doi.org/10.4324/9780429492464-chapter8}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Haslam2004}{}}%
+Haslam, N., Bastian, B., \& Bissett, M. (2004). Essentialist beliefs about personality and their implications. \emph{Personality and Social Psychology Bulletin}, \emph{30}(12), 1661--1673. \url{https://doi.org/10.1177/0146167204271182}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Haslam2014}{}}%
+Haslam, N., \& Loughnan, S. (2014). Dehumanization and infrahumanization. \emph{Annual Review of Psychology}, \emph{65}, 399--423. \url{https://doi.org/10.1146/annurev-psych-010213-115045}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Haslam2015}{}}%
+Haslam, N., \& Loughnan, S. (2015). How dehumanization promotes harm. In G. Miller Arthur (Ed.), \emph{The social psychology of good and evil} (pp. 140--158). Guilford Publications.
+
+\leavevmode\vadjust pre{\hypertarget{ref-Kteily2022}{}}%
+Kteily, N. S., \& Landry, A. P. (2022). Defining dehumanization broadly does not mean including everything. \emph{Trends in Cognitive Sciences}, \emph{26}(7), 540--541. \url{https://doi.org/10.1016/J.TICS.2022.04.003}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Lang2010}{}}%
+Lang, J. (2010). Questioning dehumanization: Intersubjective dimensions of violence in the nazi concentration and death camps. \emph{Holocaust and Genocide Studies}, \emph{24}(2), 225--246. \url{https://doi.org/10.1093/HGS/DCQ026}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Lang2020}{}}%
+Lang, J. (2020). The limited importance of dehumanization in collective violence. \emph{Current Opinion in Psychology}, \emph{35}, 17--20.
+
+\leavevmode\vadjust pre{\hypertarget{ref-Leidner2013}{}}%
+Leidner, B., Castano, E., \& Ginges, J. (2013). Dehumanization, retributive and restorative justice, and aggressive versus diplomatic intergroup conflict resolution strategies. \emph{Personality and Social Psychology Bulletin}, \emph{39}(2), 181--192. \url{https://doi.org/10.1177/0146167212472208}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Leyens2003}{}}%
+Leyens, J. P., Cortes, B., Demoulin, S., Dovidio, J. F., Fiske, S. T., Gaunt, R., \ldots{} Vaes, J. (2003). Emotional prejudice, essentialism, and nationalism: The 2002 {Tajfel Lecture}. \emph{European Journal of Social Psychology}, \emph{33}(6), 703--717. \url{https://doi.org/10.1002/EJSP.170}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Leyens2000}{}}%
+Leyens, J. P., Paladino, P. M., Rodriguez-Torres, R., Vaes, J., Demoulin, S., Rodriguez-Perez, A., \& Gaunt, R. (2000). The emotional side of prejudice: The attribution of secondary emotions to ingroups and outgroups. \emph{Personality and Social Psychology Review}, \emph{4}(2), 186--197. \url{https://doi.org/10.1207/S15327957PSPR0402_06}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Leyens2001}{}}%
+Leyens, J. P., Rodriguez-Perez, A., Rodriguez-Torres, R., Gaunt, R., Paladino, M. P., Vaes, J., \& Demoulin, S. (2001). Psychological essentialism and the differential attribution of uniquely human emotions to ingroups and outgroups. \emph{European Journal of Social Psychology}, \emph{31}(4), 395--411. \url{https://doi.org/10.1002/EJSP.50}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Loughnan2013}{}}%
+Loughnan, S., Haslam, N., Sutton, R. M., \& Spencer, B. (2013). Dehumanization and social class. \emph{Social Psychology}, \emph{45}(1), 54--61. \url{https://doi.org/10.1027/1864-9335/A000159}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Major2009}{}}%
+Major, B., \& Sawyer, P. J. (2009). Attributions to discrimination: Antecedents and consequences. In \emph{Handbook of prejudice, stereotyping, and discrimination} (pp. 89--110).
+
+\leavevmode\vadjust pre{\hypertarget{ref-Manne2018}{}}%
+Manne, K. (2018). Down girl: The logic of misogyny. In \emph{Down Girl: The Logic of Misogyny}. \url{https://doi.org/10.1093/oso/9780190604981.001.0001}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Over2020a}{}}%
+Over, H. (2020a). Falsifying the dehumanization hypothesis. \emph{Perspectives on Psychological Science}, \emph{16}(1), 33--38. \url{https://doi.org/10.1177/1745691620969657}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Over2020b}{}}%
+Over, H. (2020b). Seven challenges for the dehumanization hypothesis. \emph{Perspectives on Psychological Science}, \emph{16}(1), 3--13. https://doi.org/\url{https://doi.org/10.1177\%2F1745691620902133}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Rai2017}{}}%
+Rai, T. S., Valdesolo, P., \& Graham, J. (2017). Dehumanization increases instrumental violence, but not moral violence. \emph{Proceedings of the National Academy of Sciences of the United States of America}, \emph{114}(32), 8511--8516. \url{https://doi.org/10.1073/pnas.1705238114}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Ruiter2022}{}}%
+Ruiter, de A. (2022). Failing to see what matters most: Towards a better understanding of dehumanisation. \emph{Contemporary Political Theory 2022}, 1--22. \url{https://doi.org/10.1057/S41296-022-00569-2}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Smith2011}{}}%
+Smith, D. L. (2012). \emph{Less than human: Why we demean, enslave, and exterminate others} (pp. 1--336). St. Martin's Griffin.
+
+\leavevmode\vadjust pre{\hypertarget{ref-Smith2016}{}}%
+Smith, D. L. (2016). Paradoxes of dehumanization. \emph{Social Theory and Practice}, \emph{42}(2), 416--443. \url{https://doi.org/10.5840/SOCTHEORPRACT201642222}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Smith2021}{}}%
+Smith, D. L. (2021). Challenge 8: A response to {Over} (2021). \emph{Perspectives on Psychological Science}, \emph{16}(1), 22--23. \url{https://doi.org/10.1177/1745691620917351}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Vaes2023}{}}%
+Vaes, J. (2023). Dehumanization after all: Distinguishing intergroup evalutation from trait-based dehumanization. \emph{Cognition}, \emph{231}, 105329. \url{https://doi.org/10.1016/J.COGNITION.2022.105329}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Vaes2020}{}}%
+Vaes, J., Paladino, M. P., \& Haslam, N. (2020). Seven clarifications on the psychology of dehumanization. \emph{Perspectives on Psychological Science}, \emph{16}(1), 28--32. \url{https://doi.org/10.1177/1745691620953767}
+
+\end{CSLReferences}
+
+\end{document}

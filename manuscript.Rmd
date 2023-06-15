@@ -1,0 +1,1612 @@
+---
+title: "Attribution of undesirable character traits, rather than trait-based dehumanization, predicts punishment decisions"
+author: "Robert A. Brennan$^1$, Florence E. Enock$^{1,2}$, & Harriet Over$^1$"
+output:
+   bookdown::pdf_document2:
+    keep_tex: true
+    toc: false
+    fig_caption: yes
+header-includes:
+  # - \usepackage{setspace}\doublespacing
+  - \usepackage{caption}
+bibliography: references.bib
+link-citations: true
+linkcolor: black
+csl: apa-6th-edition.csl
+---
+
+```{r setup, include=FALSE}
+
+packagelist <- c('tidyverse','pwr','tidyselect','dplyr','ggplot2','ggpubr','RColorBrewer','rstatix','jtools','interactions','lm.beta','sandwich','lmerTest','robustlmm','car','stargazer','effects','gvlma','gridExtra','cowplot','ggsci','ez','afex','magick','broman') # list of CRAN packages
+missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
+if (length(missingpackages)>0){install.packages(missingpackages)}
+toinstall <- packagelist[which(!packagelist %in% (.packages()))]
+invisible(lapply(toinstall,library,character.only=TRUE))
+
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+```{r Exp1aanalysis, include=FALSE}
+
+Study1A_Data <- read.csv('data/DMHARM_1A_Violent_Criminals_data.csv', header = TRUE, stringsAsFactors = F)
+
+#age data
+meanage1a <- mean(Study1A_Data$Age)
+minage1a <- min(Study1A_Data$Age)
+maxage1a <- max(Study1A_Data$Age)
+sdage1a <- sd(Study1A_Data$Age)
+
+#gender data
+gendertable1a <- data.frame(table(Study1A_Data$Gender))
+
+
+VUH_VHARM <- lm(Harm_mean ~UH_mean, data = Study1A_Data)
+summary(VUH_VHARM)
+
+# GVLMA
+gvlma(VUH_VHARM)
+summary(gvlma(VUH_VHARM))
+
+# par(mfrow = c(1, 2))
+# plot(gvlma(VUH_VHARM))
+
+model1A.diag.metrics <- rstatix::augment(VUH_VHARM)
+head(model1A.diag.metrics)
+
+# plot_model1A_resid <- ggplot(model1A.diag.metrics, aes(UH_mean, Harm_mean)) +
+#   geom_point() +
+#   stat_smooth(method = lm, se = FALSE) +
+#   geom_segment(aes(xend =UH_mean, yend = .fitted), color = "red", linewidth = 0.3)
+# plot_model1A_resid
+
+# par(mfrow = c(2, 2))
+# dev.off
+# plot(VUH_VHARM)
+
+# Add observations indices and drop some columns (.se.fit, .sigma) for simplification
+#model1A.diag.metrics <- model1A.diag.metrics %>%
+# mutate(index = 1:nrow(model1A.diag.metrics)) %>%
+#select(index, everything(), -.se.fit, -.sigma)
+
+# # Inspect the data
+# head(model1A.diag.metrics, 4)
+# model1A.diag.metrics
+# 
+# #linearity of the data: residuals v fitted plot - 
+# plot(VUH_VHARM, 1)
+# 
+# #Homogeneity of variance.
+# plot(VUH_VHARM, 3)
+# 
+# #Normality of residuals
+# plot(VUH_VHARM, 2)
+# 
+# #Outliers and high levarage points
+# plot(VUH_VHARM, 5)
+
+#put them in a line in same output plot space:
+par(mfrow = c(1, 2)) 
+plot(VUH_VHARM, 4)
+abline(h =.0408)
+
+# Residuals vs Leverage
+plot(VUH_VHARM, 5)
+
+#By default, the top 3 most extreme values are labelled on the Cook’s distance plot. 
+#If you want to label the top (num) extreme values, specify the option id.n as follow:
+plot(VUH_VHARM, 4, id.n = 2)
+abline(h =.408)
+plot(VUH_VHARM, 5, id.n = 2)
+
+#If you want to look at a scecific number of observations with the highest Cook’s distance to assess them further:
+model1A.diag.metrics %>%
+  top_n(9, wt = .cooksd)
+
+#Extra point about independence of residuals. We typically only worry if we have reason to suspect correlation, 
+#e.g. DV repeatedly measured over time. - But can test using durbin watson (want non sig. value)
+durbinWatsonTest(VUH_VHARM)
+
+# Remove cases outside cook's distance ----
+Data_model1A_rm_cook <- subset(Study1A_Data, CaseID!= 62 & CaseID!=81) 
+
+#data frame with highly influential case removed
+VUH_VHARM_rm_cook <- lm(Harm_mean ~UH_mean, data = Data_model1A_rm_cook)
+
+# Final results ----
+summary(VUH_VHARM_rm_cook)
+
+#review the main results to remind 
+summary(VUH_VHARM) 
+
+gvlma(VUH_VHARM_rm_cook)
+
+summary(gvlma(VUH_VHARM_rm_cook))
+par(mfrow = c(1, 2))
+plot(gvlma(VUH_VHARM_rm_cook))
+
+#Basic plot
+#VUH_VHARM_rm_cook.p <- plot(Data_model1A_rm_cook$UH, Data_model1A_rm_cook$Harm_mean, main = "VUH_VHARM_rm_cook",
+                            #xlab = "UH", ylab = "Harm",
+                            #pch = 19, frame = FALSE)
+#abline(lm(Harm_mean ~UH_mean, data = Data_model1A_rm_cook), col = "blue")
+
+ #Add loess fit to check linearity further 
+#VUH_VHARM_rm_cook2.p <- plot(Data_model1A_rm_cook$UH, Data_model1A_rm_cook$Harm_mean, main = "VUH_VHARM_rm_cook",
+                             #xlab = "UH", ylab = "Harm",
+                             #pch = 19, frame = FALSE)
+#lines(lowess(Data_model1A_rm_cook$UH, Data_model1A_rm_cook$Harm_mean), col = "red")
+
+#To save the main results: 
+#sink("UH_HARM_rm_cookREAL.txt")
+print(summary(lm(Harm_mean ~UH_mean, data = Data_model1A_rm_cook)))
+
+Exp1a1 <- (summary(lm(Harm_mean ~UH_mean, data = Data_model1A_rm_cook)))
+Exp1a1CI <- confint(VUH_VHARM_rm_cook)
+Exp1a1CIdf <- data.frame(Exp1a1CI)
+
+#study 1b
+#rm(list = ls()) 
+#graphics.off()  
+
+Study1A_Data <- read.csv('data/DMHARM_1A_Violent_Criminals_data.csv', header = TRUE, stringsAsFactors = F)
+
+# Make the model 
+
+VHN_VHARM <- lm(Harm_mean ~HN_mean, data = Study1A_Data)
+summary(VHN_VHARM)
+
+# GVLMA  
+gvlma(VHN_VHARM)
+
+# Check assumptions ----
+#First use gvlma for a good idea about what we will see 
+gvlma(VHN_VHARM) 
+summary(gvlma(VHN_VHARM))
+#par(mfrow = c(1, 2))
+#plot(gvlma(VHN_VHARM))
+
+#Augment data to add fitted values and residuals by using the function augment() [broom package]. 
+#Call the output model1B.diag.metrics because it contains several metrics useful for regression diagnostics.
+model1B.diag.metrics <- augment(VHN_VHARM)
+head(model1B.diag.metrics)
+
+#The following plots the residuals error (in red color) between observed values and the fitted regression line. 
+#Each vertical red segment represents the residual error between an observed y value and the corresponding predicted (i.e. fitted) value.
+
+#plot_model1B_resid <- ggplot(model1B.diag.metrics, aes(HN_mean, Harm_mean)) +
+  #geom_point() +
+  #stat_smooth(method = lm, se = FALSE) +
+  #geom_segment(aes(xend =HN_mean, yend = .fitted), color = "red", size = 0.3)
+#plot_model1B_resid
+
+#check assumptions
+#par(mfrow = c(2, 2))
+#dev.off
+#plot(VHN_VHARM)
+
+# Inspect the data
+#head(model1B.diag.metrics, 4)
+#model1B.diag.metrics
+
+#linearity of the data: residuals v fitted plot - 
+#plot(VHN_VHARM, 1)
+
+#Homogeneity of variance.
+#plot(VHN_VHARM, 3)
+
+#Normality of residuals
+#plot(VHN_VHARM, 2)
+
+#Outliers and high levarage points
+#plot(VHN_VHARM, 5)
+
+#turns off par(mfrow = c(1, 2)) command 
+#dev.off()
+
+#put them in a line in same output plot space:
+plot(VHN_VHARM, 4, id.n = 7)
+abline(h =.0408)
+plot(VHN_VHARM, 5, id.n = 7)
+
+# Residuals vs Leverage
+plot(VHN_VHARM, 5)
+
+#If you want to look at a scecific number of observations with the highest Cook’s distance to assess them further:
+model1B.diag.metrics %>%
+  top_n(9, wt = .cooksd)
+
+#Extra point about independence of residuals. We typically only worry if we have reason to suspect correlation, 
+#e.g. DV repeatedly measured over time. - But can test using durbin watson (want non sig. value)
+durbinWatsonTest(VHN_VHARM)
+
+# Remove cases outside cook's distance ----
+Data_model1B_rm_cook <- subset(Study1A_Data, CaseID!= 14 & CaseID!= 18 & CaseID!= 41 & CaseID!= 62 
+                               & CaseID!= 74 & CaseID!= 81 & CaseID!= 90) 
+
+#data frame with highly influential case removed
+VHN_VHARM_rm_cook <- lm(Harm_mean ~HN_mean, data = Data_model1B_rm_cook)
+
+# Final results ----
+summary(VHN_VHARM_rm_cook) 
+
+gvlma(VHN_VHARM_rm_cook)
+
+summary(gvlma(VHN_VHARM_rm_cook))
+par(mfrow = c(1, 2))
+plot(gvlma(VHN_VHARM_rm_cook))
+
+dev.off()
+
+# #To save the main results: 
+# sink("VHN_VHARM_rm_cookREAL.txt")
+print(summary(lm(Harm_mean ~ HN_mean, data = Data_model1B_rm_cook)))
+
+Exp1a2 <- (summary(lm(Harm_mean ~ HN_mean, data = Data_model1B_rm_cook)))
+Exp1a2CI <- confint(VHN_VHARM_rm_cook)
+Exp1a2CIdf <- data.frame(Exp1a2CI)
+
+
+```
+
+```{r createFig1, include=FALSE}
+
+# STUDIES 1A AND 1B COMBINED PLOT 
+
+#Load data from both studies 
+Study1A_numeric <- read.csv('data/DMHARM_1A_Violent_Criminals_data.csv', header = TRUE, stringsAsFactors = F)
+Study1B_numeric <- read.csv('data/DMHARM_1B_Thieves_data.csv', header = TRUE, stringsAsFactors = F)
+
+# #add column for which study
+Study1A_numeric$Study <- c("1A")
+Study1B_numeric$Study <- c("1B")
+
+# Add a column for Desirability for uniform colour in plot
+Study1A_numeric$Desirability <- 1
+Study1B_numeric$Desirability <- 1
+
+#taking out highly influential cases before making whole dataset 
+Study1A_processed <- subset(Study1A_numeric, CaseID!= 14 & CaseID!= 18 & CaseID!= 41 & CaseID!= 62 & CaseID!= 74 & CaseID!= 81 & CaseID!= 90)
+
+Study1B_processed <- subset(Study1B_numeric, CaseID!= 5 & CaseID!=7 & CaseID!=24 & CaseID!=25 & CaseID!=30 & CaseID!=31 & CaseID!=34 & CaseID!=78 & CaseID!=50 & CaseID!=51) 
+
+# Rename the column names of Study1B_processed to match the column names of Study1A_processed
+colnames(Study1B_processed) <- colnames(Study1A_processed)
+
+#combine data file 
+Study1_processed_combined <- rbind(Study1A_processed, Study1B_processed)
+
+# combined plot
+
+d.plot_1 <- Study1_processed_combined %>% select(c(CaseID,UH_mean,HN_mean, Harm_mean, Study, Desirability))
+
+d.plot_1 <- d.plot_1 %>% pivot_longer(
+  cols = -c(CaseID, Harm_mean, Study, Desirability), 
+  names_to = c("Humanness_dimension"),
+  values_to = "Rating")
+
+#whole plot
+d.plot_1$Desirability <- as.factor(d.plot_1$Desirability)
+d.plot_1$Desirability <- recode_factor(d.plot_1$Desirability, "1" = 'Desirable')
+
+d.plot_1$Humanness_dimension <- as.factor(d.plot_1$Humanness_dimension)
+d.plot_1$Humanness_dimension <- recode_factor(d.plot_1$Humanness_dimension, "UH_mean" = 'Uniquely human traits', "HN_mean" = 'Human nature traits')
+
+d.plot_1$Study <- as.factor(d.plot_1$Study)
+d.plot_1$Study <- recode_factor(d.plot_1$Study, "1A" = 'Violent criminals (1A)', "1B" = 'Thieves (1B)')
+
+plot1 <- ggplot(d.plot_1,aes(y=Harm_mean,x=Rating,color=Desirability))+
+  geom_point(size=.5, alpha = .6)+
+  geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95, aes(fill=Desirability), size = .5, alpha = .4) +
+  scale_y_continuous(name = 'Harshness of punishment endorsed (0-100)', breaks = seq(0, 100, 20), limits = c(-5, 100)) +
+  scale_x_continuous(name = 'Trait attribution (0-100)', breaks = seq(0, 100, 20), limits = c(0, 100)) + 
+  theme_light() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                        legend.position = "none", legend.text = element_text(size=14), legend.title = element_text(size = 14)) +
+  theme(axis.text=element_text(size = 14, colour = "black"), axis.title=element_text(size = 14)) + 
+  facet_grid(switch = "y", ~ Study ~ Humanness_dimension ) +
+  theme(strip.text = element_text(size = 14), strip.background = element_rect(fill = 'grey55')) +
+  scale_fill_manual(values = c('#1A85FF', '#E64B35FF')) +
+  scale_color_manual(values = c('#1A85FF', '#E64B35FF')) 
+plot1
+ggsave('figures/plot1.pdf', plot1, width = 7.5, height = 7.5, dpi = 300)
+
+```
+
+$^1$Department of Psychology, University of York, York, UK. YO10 5DD  
+$^2$The Alan Turing Institute, British Library, 96 Euston Road, London, UK.  NW1 2DB
+
+Address for correspondence: Robert A. Brennan, [rb1733\@york.ac.uk](rb1733@york.ac.uk)
+
+# Abstract
+
+The construct of dehumanization is often invoked to explain intergroup harm. In key evidence for this claim, @Bastian2013 reported that the extent to which participants dehumanized criminals by denying them uniquely human character traits such as refinement, rationality and morality predicted the severity of the punishment participants endorsed for them. We revisit this influential finding across six highly powered and preregistered studies. In Studies 1A and 1B, we conceptually replicate Bastian and colleagues' effects, demonstrating that our method is sensitive to detecting relationships between trait-based dehumanization and punishment should they occur. In subsequent studies, we investigate whether the apparent relationship between trait-based dehumanization and punishment is driven by the desirability of the traits incorporated into the stimulus set, their perceived humanness, or both. Whereas Bastian et al. asked participants to rate the extent to which criminals possessed uniquely human traits that were socially desirable, we asked participants to rate the extent to which criminals possessed uniquely human traits that were both socially desirable (e.g., cultured, civilised) and socially undesirable (e.g., arrogant, bitter). Correlational (studies 2A and 2B) and experimental (studies 3A and 3B) evidence converge on the conclusion that apparent evidence for the relationship between trait-based dehumanization and punishment is better explained by the extent to which participants attribute socially desirable attributes to criminals rather than the extent to which they attribute uniquely human attributes to criminals. Taken together, these studies cast doubt on the hypothesised causal relationship between trait-based dehumanization and harm, at least in this context.
+
+*Keywords*: dehumanization, harm, intergroup bias, punishment, social cognition, trait attribution
+
+# Introduction
+
+Understanding the motivations that lead to intergroup harm has been a driving force behind social psychology since its conception [@Farr1996; @Gaines1995]. Many psychological processes have been shown to exacerbate outgroup derogation, including prejudicial attitudes and stereotyping [@Dovidio2010; @Major2009]. Over the last 25 years, an increasing body of research has investigated the extent to which a psychological process of dehumanization increases the risk of intergroup harm [@Bloom2022; @Giner-Sorolla2021; @Goldenberg2021; @Lang2010; @Lang2020; @Manne2018; @Over2020a; @Over2020b; @Rai2017; @Ruiter2022; @Smith2021; @Vaes2020]. According to the dehumanization hypothesis, when members of an outgroup are perceived as less human than ingroup members, they are at greater risk of harm [@Haslam2019; @Haslam2014; @Haslam2015; @Smith2011; @Smith2016]. Subtle forms of dehumanization are thought to be pervasive in contemporary society. For example, the dehumanization of national groups [@Bain2011; @Leyens2003], religious groups [@Banton2020; @Leidner2013], individuals on a low income [@Loughnan2013], and refugees [@Bruneau2018; @Esses2008] has been reported in the literature.
+
+Within social psychology, several different characterisations of dehumanization have been proposed. Infrahumanization theory [@Leyens2000; @Leyens2001] posits that a subtle form of dehumanization occurs where outgroup members are viewed as experiencing uniquely human emotions such as pride and melancholy to a lesser extent than ingroup members. The mental state account maintains that outgroup members are dehumanized to the extent that they are denied mental states [@Gray2007; @Hare2020; @Harris2006].
+
+The dual model of dehumanization is of particular interest to the current research [@Haslam2006]. According to the dual model, individuals and groups are dehumanized to the extent that they are denied uniquely human character traits. The dual model distinguishes between two forms of dehumanization [@Haslam2004]. When outgroup members are *animalistically dehumanized*, or perceived as similar to animals, they are thought to possess traits such as civility, refinement, rationality, moral sensibility, and maturity to a lesser extent than the ingroup. When outgroup members are *mechanistically dehumanized*, or perceived as similar to robots, they are thought to possess traits such as emotional responsiveness, interpersonal warmth, depth, cognitive openness, and agency to a lesser extent than the ingroup.
+
+According to the dual model, the more an individual or group is either animalistically or mechanistically dehumanized, the greater their risk of being harmed [@Haslam2006; @Haslam2014]. @Haslam2014 argue that "*dehumanization is important as a psychological phenomenon because it can be so common and yet so dire in its consequences*" (p. 401). @Haslam2021 further notes that "*Many studies have examined how dehumanizing perceptions enable harm or provide support for it. Some of this work points to direct links between tendencies to dehumanize others and… aggressive behaviour*" (pp. 139). Empirical research has suggested that trait-based dehumanization facilitates social exclusion [@Bastian2010] and reduces prosocial behaviour [@Andrighetto2014].
+
+@Bastian2013 conducted one of the most prominent empirical studies testing the hypothesised association between the denial of human character traits and harm. The researchers measured how trait-based dehumanization influenced participants' punishment of criminals. Participants were asked to rate their agreement with four items assessing animalistic dehumanization of criminals: "*I felt like the person in the story was refined and cultured*" [reversed], "*I felt like the person in the story was rational and logical, like they were intelligent*" [reversed] "*I felt like the person in the story lacked self-restraint, like an animal*", and "*I felt like the person in the story was unsophisticated*". Participants were also asked to rate their agreement with four items assessing mechanistic dehumanization of criminals: "*I felt like the person in the story was open minded, like they could think clearly about things*" [reversed], "*I felt like the person in the story was emotional, like they were responsive and warm*" [reversed], "*I felt like the person in the story was superficial like they had no depth*", "*I felt like the person in the story was mechanical and cold, like a robot*". Bastian and colleagues reported that both forms of dehumanization predicted endorsement of harsh punishment for the criminals portrayed in their stimuli, concluding that their participants viewed criminals as '*subhuman and beastly*' (pp.9).
+
+Recently, however, the explanatory value of the dual model has been called into question [@Enock2021a; @Over2020a; -@Over2020b]. According to these critiques, evidence for trait-based dehumanization is often confounded with social desirability. In Bastian and colleagues' work, evidence that criminals were animalistically dehumanized was drawn from the observation that participants judged them to be unsophisticated, lacking self-restraint, unrefined, uncultured, irrational, and unintelligent. Evidence that criminals were mechanistically dehumanized came from the observation that participants viewed them as superficial, cold, and lacking in warmth and responsiveness. These results may reflect dehumanization because the traits criminals were found to lack are those perceived as uniquely or essentially human [@Haslam2006; @Haslam2004]. However, as the traits deemed uniquely humans were all socially desirable, it is impossible to separate evidence for trait-based dehumanization from evidence for negative evaluation more generally. An alternative explanation for the findings from Bastian and colleagues is that participants endorse harsh punishment against criminals to the extent they perceive criminals to possess undesirable or antisocial characteristics.
+
+One way to de-confound evidence for trait-based dehumanization from evidence of negative evaluation is to ask participants to rate the target group on traits that are uniquely human but socially undesirable [@Over2020a; -@Over2020b]. Previous research has established that undesirable character traits such as jealousy, spite and bitterness are considered unique to humans and socially undesirable [@Enock2021a]. Enock and colleagues [-@Enock2021a] found that whereas participants tend to attribute socially desirable human traits more strongly to the ingroup, they tend to attribute socially undesirable traits more strongly to the outgroup. This result held across three intergroup contexts [see also @Enock2021b; @Enock2022]. Enock and colleagues conclude that apparent evidence for trait-based dehumanization may be better explained by intergroup preference. However, it is not yet clear how the attribution of uniquely human character traits relates to harm.
+
+We revisit the hypothesised causal relationship between trait-based dehumanization and harm in the context of endorsing harsh punishment for criminals. In Studies 1A and 1B, we seek to conceptually replicate the key findings of Bastian and colleagues [-@Bastian2013] suggesting that the extent to which participants animalistically (Study 1A) and mechanistically (Study 1B) dehumanize criminals predicts the severity of the punishment participants endorse for them. In Studies 2A and 2B, we adopt a similar design but incorporate socially undesirable traits into our stimulus set. This addition to the design allows us to investigate whether trait-based dehumanization predicts the severity of punishment, undesirable trait attribution predicts the severity of punishment, or both predict the severity of punishment. In Studies 3A and 3B, we seek to investigate a similar question using an experimental design. We present participants with vignettes in which criminals are described using character traits that differ in how socially desirable they are and in whether or not they are unique to humans and measure how these varying descriptions influence participants' parole decisions. This allows us to directly measure whether there is a causal relationship between trait-based dehumanization and punishment. 
+
+# Methods
+
+All studies received ethical approval from the Psychology Departmental Ethics Committee University of York. All data collection occurred online, and the studies were created and administered using Qualtrics (https://www.qualtrics.com). Participants were recruited through the online platform Prolific (https://www.prolific.co), with an independent sample recruited for each study. Informed consent was obtained at the start of each session according to approved ethical guidelines. Inclusion criteria for each study included adult participants fluent in English who had never been to prison for committing a crime and had a Prolific approval rating of at least 90% (95% for Studies 3A and 3B). Increases in Prolific's recommended rate of compensation for participation during data collection meant the reward ranged from approximately £7 per hour in Studies 1A and 1B to approximately £8 in the other four studies. Assumption testing and analyses were conducted using *SPSS* and *RStudio*. All studies were pre-registered on AsPredicted.com before commencing data collection. Links to pre-registration documents, data files, files for computational replication on GitHub, and supplementary materials including the stimuli used for each study can be found at: https://osf.io/d4cvp/?view_only=ccf139206e59471b979f53708595ef05. 
+
+# Study 1A
+
+@Bastian2013 presented evidence that the more participants dehumanize violent criminals, the harsher the punishment participants endorse for them. We sought to test whether we could conceptually replicate this relationship between trait-based dehumanization and punishment using terms very similar to those used by Bastian and colleagues. In study 1A, participants read a series of scenarios describing fictitious criminals and their violent crimes. Following this, participants rated the extent to which the criminals possessed four character traits that distinguish humans from animals (*refined, rational and logical, has a sense of morality* and *civilised*). Following common practice in the field, we refer to these as uniquely human traits. Participants also rated the extent to which criminals possessed four character traits that distinguish humans from machines (*openminded, emotionally responsive, has a depth of character*, and *interpersonally warm*). Following common practice in the field, we refer to these as human nature traits. Participants also responded to an item measuring how harsh they thought the violent criminals' punishment should be. Following @Bastian2013, we predicted that the less participants attributed these uniquely human traits to criminals, the harsher the punishment they would recommend for criminals.
+
+## Participants
+
+``` {r Exp1apoweranalysis, include=FALSE}
+
+Exp1aPA <- pwr.f2.test(u = 1, v = NULL , f2 = 0.15, sig.level = 0.05, power = .95)
+
+```
+
+A power analysis using G\*Power indicated that a sample size of `r round(Exp1aPA$v)+2` would allow us to detect a medium effect size ($f^2$ = `r Exp1aPA$f2`) with an alpha of `r Exp1aPA$sig.level` and power of `r Exp1aPA$power`. A final sample of 100 participants was collected, with `r gendertable1a$Freq[1]` identifying as female, `r gendertable1a$Freq[2]+1` as male and `r gendertable1a$Freq[3]-1` as non-binary. Ages ranged from `r minage1a` to `r maxage1a` (*M* = `r meanage1a`, *SD* = `r round(sdage1a, digits = 2)`). In accordance with our pre-registered exclusion criteria, data submitted by six individuals who failed one or both attention checks (i.e., gave a response more than 20 points away from the instructed end of the scale) were omitted and replaced. Participation took an average of approximately eight minutes.
+
+## Materials
+
+**Vignettes**. All participants responded to the same five vignettes detailing different scenarios involving violent crimes. An effort was made to ensure that all five vignettes were similar in length, degree of detail, and severity of crimes depicted. In each vignette, the target's name and pronouns were gender-neutral, their age and ethnicity were not indicated, and the scenarios depicted were all set in unspecified locations. All vignettes are included in the Supplementary materials. For example: "*Charlie was arrested after a fight broke out in a pub soon after opening time, apparently triggered by a minor disagreement. Charlie smashed a pint glass and used it to stab another customer. Two additional customers received cuts as they tried to hold Charlie back until the Police arrived*."
+
+**Trait attribution**. After reading each vignette, participants responded to items designed to measure trait-based dehumanization, broadly following the procedure of Bastian and colleagues [-@Bastian2013]. Participants indicated the extent to which they attributed four uniquely human traits (*refined, rational and logical, has a sense of morality* and *civilised*) and four human nature traits (*openminded, emotionally responsive, has a depth of character*, and *interpersonally warm*) to the criminals depicted. Participants indicated their agreement with each item (e.g., '*I think* [e.g., *Charlie*] *is refined*') using an unmarked sliding scale from 0 ('*Strongly Disagree*') to 100 ('*Strongly Agree*'), with the sliders initially fixed at the midpoint. According to the dual model, lower scores indicated greater dehumanization of violent criminals. An attention check appeared halfway through the dehumanization items for two criminals ('*Please move the slider all the way to Strongly Agree/Disagree*'). 
+
+**Harshness of punishment endorsed**. Using an unmarked sliding scale that ranged from 0 ('*Not at all harsh*') to 100 ('*Very harsh*'), participants were asked to respond to the question '*How harsh do you think the punishment for* [e.g., *Charlie*] *should be*?'.
+
+## Design
+
+Following @Bastian2013, we utilised a within-subjects, correlational design. All participants read the same five vignettes presented in a random order and responded to the same trait attribution and punishment items. Participants' scores for the trait attribution items and the endorsed harshness of punishment item were then averaged across scenarios. The presentation of the items in the trait attribution task was also randomised. 
+
+## Procedure
+
+Participants were informed that the study would examine how social attributions influence our behavioural intentions towards criminals. After providing informed consent, participants answered a few demographic questions and confirmed that they had never been to prison for committing a crime. The first of five vignettes then followed. After reading the vignette, participants were asked to respond to the trait attribution items, followed by the single item asking them to indicate how harshly they thought the criminal should be punished. Participants repeated the above steps for each of the remaining four vignettes. To ensure participants read the stimuli carefully, each vignette remained on the screen for at least 15 seconds. 
+
+## Results
+
+### Model 1: Animalistic dehumanization and punishment
+
+In line with our pre-registered criteria, this analysis omitted two highly influential cases (remaining sample *N* = 98). We first calculated the average attribution score for uniquely human traits and punishment for each participant in the sample. We then conducted a simple linear regression to understand whether the extent to which participants attributed uniquely human traits to criminals predicted the harshness of punishment participants endorsed for them. A significant negative relationship was found, *b* = `r round(Exp1a1$coefficients[2], digits = 2)` [`r round(Exp1a1CIdf$X2.5[2], digits = 2)`, `r round(Exp1a1CIdf$X97.5[2], digits = 2)`], *t* = `r round(Exp1a1$coefficients[6], digits = 2)`, *p* `r format.pval(Exp1a1$coefficients[8], digits = 2, eps = 0.001, nsmall = 3)`, see Figure \@ref(fig:figure1). Thus, the more violent criminals were animalistically dehumanized (by being denied uniquely human traits), the harsher the punishment participants endorsed. The model explained approximately `r round(Exp1a1$r.squared, digits = 2)*100`% of the variance in the harshness of punishment scores, $R^2$ = `r round(Exp1a1$r.squared, digits = 2)`, *F*(`r round(Exp1a1$fstatistic[2], digits = 2)`, `r round(Exp1a1$fstatistic[3], digits = 2)`) = `r round(Exp1a1$fstatistic[1], digits = 2)`. 
+
+```{r figure1, fig.cap="Results of Study 1. Seemingly in line with Bastian and colleagues (2013), greater animalistic (left) and mechanistic (right) dehumanization of violent criminals (Study 1A, top) and thieves (Study 1B, bottom) was associated with harsher punishment.", fig.align="center", echo=FALSE}
+
+knitr::include_graphics('figures/plot1.pdf')
+
+```
+
+### Model 2: Mechanistic dehumanization and punishment
+
+In line with our pre-registered criteria, seven highly influential were omitted from the analysis (remaining sample *N* = 93). After calculating the average attribution score for human nature traits and punishment for each participant, we conducted a simple linear regression to test attribution of human nature traits predicted the harshness of punishment endorsed for violent criminals. A significant negative relationship was found, *b* = `r round(Exp1a2$coefficients[2], digits = 2)` [`r round(Exp1a2CIdf$X2.5[2], digits = 2)`, `r round(Exp1a2CIdf$X97.5[2], digits = 2)`], *t* = `r round(Exp1a2$coefficients[6], digits = 2)`, *p* `r format.pval(Exp1a2$coefficients[8], digits = 2, eps = 0.001, nsmall = 3)`, see Figure \@ref(fig:figure1). This relationship shows that greater mechanistic dehumanization (operationalised as the denial of human nature traits) was associated with the endorsement of harsher punishment. The model explains `r round(Exp1a2$r.squared, digits = 2)*100`% of the variance in the harshness of punishment scores, $R^2$ = `r round(Exp1a2$r.squared, digits = 2)`, *F*(`r round(Exp1a2$fstatistic[2], digits = 2)`, `r round(Exp1a2$fstatistic[3], digits = 2)`) = `r round(Exp1a2$fstatistic[1], digits = 2)`. 
+
+``` {r Exp1banalysis, include=FALSE}
+# STUDY 1B: THIEVES AS TARGETS 
+
+# Animalistic Dehumanization model ----
+
+#rm(list = ls()) 
+#graphics.off()  
+
+Study1B_Data <- read.csv('data/DMHARM_1B_Thieves_data.csv', header = TRUE, stringsAsFactors = F)
+
+#age data
+meanage1b <- mean(Study1B_Data$Age)
+minage1b <- min(Study1B_Data$Age)
+maxage1b <- max(Study1B_Data$Age)
+sdage1b <- sd(Study1B_Data$Age)
+
+#gender data
+gendertable1b <- data.frame(table(Study1B_Data$Gender))
+
+#Make the model
+
+TUH_THARM <- lm(Harm_mean ~UH_mean, data = Study1B_Data)
+summary(TUH_THARM)
+
+# GVLMA 
+gvlma(TUH_THARM)
+
+# Check assumptions ----
+#First use gvlma for a good idea about what we will see 
+gvlma(TUH_THARM) 
+summary(gvlma(TUH_THARM))
+par(mfrow = c(1, 2))
+plot(gvlma(TUH_THARM))
+
+model2A.diag.metrics <- augment(TUH_THARM)
+head(model2A.diag.metrics)
+
+#The following plots the residuals error (in red color) between observed values and the fitted regression line. 
+#Each vertical red segment represents the residual error between an observed y value and the corresponding predicted (i.e. fitted) value.
+
+plot_model2A_resid <- ggplot(model2A.diag.metrics, aes(UH_mean, Harm_mean)) +
+  geom_point() +
+  stat_smooth(method = lm, se = FALSE) +
+  geom_segment(aes(xend =UH_mean, yend = .fitted), color = "red", linewidth = 0.3)
+plot_model2A_resid
+
+#check assumptions
+par(mfrow = c(2, 2))
+dev.off
+plot(TUH_THARM)
+
+# Add observations indices and drop some columns (.se.fit, .sigma) for simplification
+# model2A.diag.metrics <- model2A.diag.metrics %>%
+# mutate(index = 1:nrow(model2A.diag.metrics)) %>%
+# select(index, everything(), -.se.fit, -.sigma)
+ 
+# Inspect the data
+head(model2A.diag.metrics, 4)
+model2A.diag.metrics
+
+#linearity of the data: residuals v fitted plot - 
+plot(TUH_THARM, 1)
+
+#Homogeneity of variance.
+plot(TUH_THARM, 3)
+
+#Normality of residuals
+plot(TUH_THARM, 2)
+
+#Outliers and high levarage points
+plot(TUH_THARM, 5)
+
+#Influential values
+#A rule of thumb is that an observation has high influence if Cook’s distance exceeds 4/(n - p - 1) (P. Bruce and Bruce 2017), 
+#where n is the number of observations and p the number of predictor variables.
+# Cook's distance - 4/(100-1-1) is .0408 here, there are two going over this 
+
+#turns off par(mfrow = c(1, 2)) command 
+#dev.off()
+
+#put them in a line in same output plot space:
+plot(TUH_THARM, 4, id.n = 8)
+abline(h =.0408)
+plot(TUH_THARM, 5, id.n = 2)
+
+# Residuals vs Leverage
+plot(TUH_THARM, 5)
+
+#If you want to look at a specific number of observations with the highest Cook’s distance to assess them further:
+model2A.diag.metrics %>%
+  top_n(9, wt = .cooksd)
+
+#Extra point about independence of residuals. We typically only worry if we have reason to suspect correlation, 
+#e.g. DV repeatedly measured over time. - But can test using durbin watson (want non sig. value)
+durbinWatsonTest(TUH_THARM)
+
+# Examine influential cases in model 
+# Remove cases outside cook's distance ---- 
+Data_model2A_rm_cook <- subset(Study1B_Data, CaseID!= 7 & CaseID!= 24 & CaseID!= 31 
+                              & CaseID!=34 & CaseID!=50 & CaseID!=51 & CaseID!=78) 
+
+#data frame with highly influential case removed
+TUH_THARM_rm_cook <- lm(Harm_mean ~UH_mean, data = Data_model2A_rm_cook)
+
+# Final results ----
+summary(TUH_THARM_rm_cook) 
+
+#review the main results to remind 
+summary(TUH_THARM) 
+
+gvlma(TUH_THARM_rm_cook)
+
+summary(gvlma(TUH_THARM_rm_cook))
+par(mfrow = c(1, 2))
+plot(gvlma(TUH_THARM_rm_cook))
+
+dev.off()
+
+# #To save the main results: 
+# sink("TUH_THARM_rm_cookREAL.txt")
+print(summary(lm(Harm_mean ~UH_mean, data = Data_model2A_rm_cook)))
+Exp1b1 <- (summary(lm(Harm_mean ~UH_mean, data = Data_model2A_rm_cook)))
+Exp1b1CI <- confint(TUH_THARM_rm_cook)
+Exp1b1CIdf <- data.frame(Exp1b1CI)
+
+
+# Mechanistic Dehumanization model ----
+#rm(list = ls()) 
+#graphics.off()
+
+Study1B_Data <- read.csv('data/DMHARM_1B_Thieves_data.csv', header = TRUE, stringsAsFactors = F)
+
+#Make the model
+THN_THARM <- lm(Harm_mean ~HN_mean, data = Study1B_Data)
+summary(THN_THARM)
+
+# GVLMA
+gvlma(THN_THARM)
+
+# Check assumptions ----
+#First use gvlma for a good idea about what we will see 
+gvlma(THN_THARM) 
+summary(gvlma(THN_THARM))
+par(mfrow = c(1, 2))
+plot(gvlma(THN_THARM))
+
+#Augment your data to add fitted values and residuals by using the function augment() [broom package]. 
+#Call the output model2B.diag.metrics because it contains several metrics useful for regression diagnostics, described in following. 
+
+model2B.diag.metrics <- augment(THN_THARM)
+head(model2B.diag.metrics)
+
+#The following plots the residuals error (in red color) between observed values and the fitted regression line. 
+#Each vertical red segment represents the residual error between an observed y value and the corresponding predicted (i.e. fitted) value.
+
+plot_model2B_resid <- ggplot(model2B.diag.metrics, aes(HN_mean, Harm_mean)) +
+  geom_point() +
+  stat_smooth(method = lm, se = FALSE) +
+  geom_segment(aes(xend =HN_mean, yend = .fitted), color = "red", size = 0.3)
+plot_model2B_resid
+
+#check assumptions
+par(mfrow = c(2, 2))
+dev.off
+plot(THN_THARM)
+
+# Add observations indices and drop some columns (.se.fit, .sigma) for simplification
+#model2B.diag.metrics <- model2B.diag.metrics %>%
+# mutate(index = 1:nrow(model2B.diag.metrics)) %>%
+#select(index, everything(), -.se.fit, -.sigma)
+
+# Inspect the data
+head(model2B.diag.metrics, 4)
+model2B.diag.metrics
+
+#linearity of the data: residuals v fitted plot - 
+plot(THN_THARM, 1)
+
+#Homogeneity of variance.
+plot(THN_THARM, 3)
+
+#Normality of residuals
+plot(THN_THARM, 2)
+
+#Outliers and high levarage points
+plot(THN_THARM, 5)
+
+#Influential values
+#turns off par(mfrow = c(1, 2)) command 
+dev.off()
+
+plot(THN_THARM, 4, id.n = 10)
+abline(h =.0408)
+plot(THN_THARM, 5, id.n = 2)
+
+# Residuals vs Leverage
+plot(THN_THARM, 5)
+
+#If you want to look at a scecific number of observations with the highest Cook’s distance to assess them further:
+model2B.diag.metrics %>%
+  top_n(9, wt = .cooksd)
+
+#Extra point about independence of residuals. We typically only worry if we have reason to suspect correlation, 
+#e.g. DV repeatedly measured over time. - But can test using durbin watson (want non sig. value)
+durbinWatsonTest(THN_THARM)
+
+# Examine influential cases in model
+# Remove cases outside cook's distance ----
+Data_model2B_rm_cook <- subset(Study1B_Data, CaseID!= 5 & CaseID!=7 & CaseID!=24 
+                              & CaseID!=25 & CaseID!=30 
+                              & CaseID!=31 & CaseID!=34 & CaseID!=78) 
+
+#data frame with highly influential case removed
+THN_THARM_rm_cook <- lm(Harm_mean ~HN_mean, data = Data_model2B_rm_cook)
+
+# Final results ----
+summary(THN_THARM_rm_cook) 
+
+#review the main results to remind 
+summary(THN_THARM) 
+
+gvlma(THN_THARM_rm_cook)
+
+summary(gvlma(THN_THARM_rm_cook))
+par(mfrow = c(1, 2))
+plot(gvlma(THN_THARM_rm_cook))
+
+#dev.off()
+
+# #To save the main results: 
+# sink("THN_THARM_rm_cookREAL.txt")
+print(summary(lm(Harm_mean ~HN_mean, data = Data_model2B_rm_cook)))
+Exp1b2 <- (summary(lm(Harm_mean ~HN_mean, data = Data_model2B_rm_cook)))
+Exp1b2CI <- confint(THN_THARM_rm_cook)
+Exp1b2CIdf <- data.frame(Exp1b2CI)
+
+
+```
+
+# Study 1B
+
+Study 1B investigates whether the relationship found in Study 1A replicates when participants are asked to judge a different type of criminal activity. In Study 1B, we examined whether animalistic and mechanistic dehumanization, as operationalised by @Bastian2013, are associated with the harshness of punishment endorsed for individuals who commit theft. The design, materials and analysis plan were similar to that used in Study 1A, except that the scenarios involved theft rather than violent crime.
+
+## Method
+
+### Participants
+
+Based on the same power analysis used in Study 1A, a sample of 100 participants was collected, with `r gendertable1b$Freq[2]+1` identifying as male and `r gendertable1b$Freq[1]` as female. Ages ranged from `r minage1b ` to `r maxage1b` (*M* = `r meanage1b `, *SD* = `r round(sdage1b, digits = 2) `). The attention checks in Study 1A were also used in Study 1B. Ten participants failed one or both attention checks, and their data was omitted and replaced as per our pre-registration. Participation took an average of nine minutes.
+
+### Materials
+
+The measures of dehumanization and punishment were identical to those used in Study 1A.
+
+**Vignettes** All participants responded to the same five vignettes, each detailing a crime involving theft (see Supplementary materials). As in Study 1A, an effort was made to ensure the vignettes were similar in structure and amount of detail. Once again, all of the perpetrators had gender-neutral names. An example of one of the theft vignettes is as follows: "*Until their recent arrest, Charlie had worked as a till operator at a local charity shop supporting individuals experiencing homelessness. Charlie had been stealing cash amounts varying from £5 to £50 from the tills almost daily over a five-year period. Police revealed that Charlie had stolen several thousand pounds from the charity shop while working there*."
+
+## Results
+
+### Model 1: Animalistic dehumanization and punishment
+
+Seven highly influential cases were omitted from the analysis (remaining sample *N* = 93). We calculated the average attribution scores for uniquely human trait attribution and punishment for each participant and then conducted a simple linear regression to measure whether trait attribution predicted the harshness of punishment endorsed for thieves. As shown in Figure \@ref(fig:figure1), a significant negative relationship was found, *b* =`r round(Exp1b1$coefficients[2], digits = 2)` [`r round(Exp1b1CIdf$X2.5[2], digits = 2)`, `r round(Exp1b1CIdf$X97.5[2], digits = 2)`], *t* = `r round(Exp1b1$coefficients[6], digits = 2)`, *p* `r format.pval(Exp1b1$coefficients[8], digits = 2, eps = 0.001, nsmall = 3)`. Thus, greater animalistic dehumanization of thieves was associated with the endorsement of harsher punishment for them. The model explains approximately `r round(Exp1b1$r.squared, digits = 2)*100`% of the variance in the harshness of punishment scores, $R^2$ = `r round(Exp1b1$r.squared, digits = 2)`, *F*(`r round(Exp1b1$fstatistic[2], digits = 2)`, `r round(Exp1b1$fstatistic[3], digits = 2)`) = `r round(Exp1b1$fstatistic[1], digits = 2)`.
+
+### Model 2: Mechanistic dehumanization and punishment
+
+Eight highly influential cases were omitted from the analysis (remaining sample *N* = 92). After calculating the average score of human trait attribution and punishment, we conducted a simple linear regression to test whether or not human trait attribution predicted the harshness of punishment endorsed for thieves. A significant negative relationship was found, *b* = `r round(Exp1b2$coefficients[2], digits = 2)` [`r round(Exp1b2CIdf$X2.5[2], digits = 2)`, `r round(Exp1b2CIdf$X97.5[2], digits = 2)`], *t* = `r round(Exp1b2$coefficients[6], digits = 2)`, *p* = `r format.pval(Exp1b2$coefficients[8], digits = 1, eps = 0.001, nsmall = 3)`. These data show that greater mechanistic dehumanization is associated with the endorsement of harsher punishment for thieves (see Figure \@ref(fig:figure1)). The model explains approximately `r round(Exp1b2$r.squared, digits = 2)*100`% of the variance in the harshness of punishment scores, $R^2$ = `r round(Exp1b2$r.squared, digits = 2)`, *F*(`r round(Exp1b2$fstatistic[2], digits = 2)`, `r round(Exp1b2$fstatistic[3], digits = 2)`) = `r round(Exp1b2$fstatistic[1], digits = 2)`.
+
+# Study 2A
+
+```{r Exp2AAnalysis, include=FALSE}
+
+Study2A_numeric <- read.csv('data/DMHARM_2A_Violent_Criminals_data.csv', header = TRUE, stringsAsFactors = F)
+
+# Power analysis and participant demographics
+Exp2APA <- pwr.f2.test(u = 3, v = NULL , f2 = 0.15, sig.level = 0.05, power = .95)
+genderTable2A <- data.frame(table(Study2A_numeric$Gender))
+
+# Animalistic Dehumanization model ----
+#create moderation model
+UH_harm <- lm(Harm_mean ~ UH_mean*Desirability_condition, data = Study2A_numeric)
+summary(UH_harm) #Review the results
+gvlma(UH_harm) #All are accepted 
+
+#par(mfrow = c(1, 2))
+#plot(gvlma(UH_harm))
+
+#Augment data to add fitted values and residuals by using the function augment() [broom package]. 
+#Aall the output model1.diag.metrics because it contains several metrics useful for regression diagnostics
+model1.diag.metrics <- augment(UH_harm)
+head(model1.diag.metrics)
+
+#plot(UH_harm, 5) 
+
+#looks like there some outliers (over 3 standardised residuals)
+#several scores have high leverage 2(3+1)/130 = .06. 
+
+#Influential values - Cook's Distance - 4/(n - p - 1) - 4/(130 - 3 - 1) = .032. 
+#put them in a line in same output plot space - can see a few outlier/high lev/influentials
+#par(mfrow = c(1, 2)) 
+#plot(UH_harm, 4, id.n = 8)
+#abline(h =.032)
+
+# Residuals vs Leverage
+#plot(UH_harm, 5)
+
+#Top 3 observations with the highest Cook's distance:
+model1.diag.metrics %>%
+  top_n(10, wt = .cooksd)
+
+#Can see there are 8 that go over .032 - 1, 23, 29, 35, 53, 70, 81, 104
+model1.diag.metrics %>%
+  top_n(8, wt = .cooksd)
+
+# Residuals vs Leverage, check where the 8 are
+#plot(UH_harm, 5, id.n = 8)
+durbinWatsonTest(UH_harm)
+
+### May be better to automate ###
+
+# Remove influential cases UH ----
+UH_harm_rmCooks_data <- subset(Study2A_numeric, CaseID!= 1 & CaseID!= 23 &
+                                 CaseID!= 29 & CaseID!= 35 &
+                                 CaseID!= 53 & CaseID!= 70 &
+                                 CaseID!= 81 & CaseID!= 104)
+
+UH_harm_rmCooks_data_centred <-gscale(data= UH_harm_rmCooks_data, vars=c("UH_mean", "HN_mean", "Desirability_condition"), center.only=TRUE)
+
+#save processed data files
+##write.csv(UH_harm_rmCooks_data,"...//Study2A_UH_harm_rmCooks_data.csv", row.names = FALSE)
+#write.csv(UH_harm_rmCooks_data_centred, "...//Study2A_UH_harm_rmCooks_data.csv", row.names = FALSE)
+
+#Processed Animalistic moderation model results ----
+UH_harm_processed <- lm(Harm_mean ~ UH_mean*Desirability_condition, data = UH_harm_rmCooks_data_centred)
+gvlma(UH_harm_processed) #All are accepted 
+
+exp2AUHR2 <- summary(UH_harm_processed)
+exp2AUHBeta <- tidy(UH_harm_processed, conf.int=TRUE)
+exp2AUHSlope <- probe_interaction(UH_harm_processed,pred=UH_mean,modx=Desirability_condition, confint = TRUE)
+
+# Mechanistic Dehumanization model ----
+#create moderation model
+HN_harm <- lm(Harm_mean ~ HN_mean*Desirability_condition, data = Study2A_numeric)
+summary(HN_harm) #Review the results
+
+gvlma(HN_harm) #All are accepted other than link function, doesn't matter about this one 
+
+# Check influential scores HN with Cooks -------------------------------------
+
+gvlma(HN_harm) 
+summary(gvlma(HN_harm))
+#par(mfrow = c(1, 2))
+#plot(gvlma(HN_harm))
+
+#Augment data to add fitted values and residuals by using the function augment() [broom package]. 
+#All the output model1.diag.metrics because it contains several metrics useful for regression diagnostics, described in following. 
+
+model2.diag.metrics <- augment(HN_harm)
+head(model2.diag.metrics)
+
+#plot(HN_harm, 5) #looks like there some outliers (over 3 standardised residuals)
+#several scores have high leverage 2(3+1)/130 = .06. 
+
+#Influential values - Cooks - 4/(n - p - 1) - 4/(130 - 3 - 1) = .032. 
+
+#put them in a line in same output plot space - can see a few outlier/high lev/influentials
+#par(mfrow = c(1, 2)) 
+#plot(HN_harm, 4, id.n = 8)
+#abline(h =.032)
+
+# Residuals vs Leverage
+#plot(HN_harm, 5)
+
+#Top 3 observations with the highest Cook's distance:
+model2.diag.metrics %>%
+  top_n(10, wt = .cooksd)
+
+#Can see here there are 8 that go over .032 - 23, 29, 31, 35, 63, 81, 104, 130
+model2.diag.metrics %>%
+  top_n(8, wt = .cooksd)
+
+# Residuals vs Leverage, check where the 8 are
+#plot(HN_harm, 5, id.n = 8)
+
+durbinWatsonTest(HN_harm)
+
+# Remove influential cases HN ------------------------------------------------
+
+HN_harm_rmCooks_data <- subset(Study2A_numeric, CaseID!= 23 & CaseID!= 29 &
+                                 CaseID!= 31 & CaseID!= 35 &
+                                 CaseID!= 63 & CaseID!= 81 &
+                                 CaseID!= 104 & CaseID!= 130)
+
+HN_harm_rmCooks_data_centred <-gscale(data= HN_harm_rmCooks_data, vars=c("UH_mean", "HN_mean", "Desirability_condition"), center.only=TRUE)
+
+#Processed Mechanistic Moderation model results ----
+HN_harm_processed <- lm(Harm_mean ~ HN_mean*Desirability_condition, data = HN_harm_rmCooks_data_centred)
+gvlma(HN_harm_processed) #All are accepted
+
+exp2AHNR2 <- summary(HN_harm_processed)
+exp2AHNBeta <- tidy(HN_harm_processed, conf.int=TRUE)
+exp2AHNSlope <- probe_interaction(HN_harm_processed,pred=HN_mean,modx=Desirability_condition, confint = TRUE)
+
+```
+
+```{r createfig2, include = FALSE}
+
+# STUDIES 2A AND 2B COMBINED PLOT #
+
+Study2A_numeric <- read.csv('data/DMHARM_2A_Violent_Criminals_data.csv', header = TRUE, stringsAsFactors = F)
+Study2B_numeric <- read.csv('data/DMHARM_2B_Thieves_data.csv', header = TRUE, stringsAsFactors = F)
+
+#add column for which study
+Study2A_numeric$Study <- c("2A")
+Study2B_numeric$Study <- c("2B")
+
+#taking out cooks before making whole dataset 
+Study2A_processed <- subset(Study2A_numeric,CaseID!= 1 & CaseID!= 23 & CaseID!= 29 & CaseID!= 31 
+                            & CaseID!= 35 & CaseID!= 53 & CaseID!= 63 & CaseID!= 70 & CaseID!= 81 
+                            & CaseID!= 104 & CaseID!= 130) 
+
+Study2B_processed <- subset(Study2B_numeric,CaseID!= 19 & CaseID!= 23 & CaseID!= 25 & CaseID!= 29 &
+                             CaseID!= 48 & CaseID!= 56 & CaseID!= 77 & CaseID!= 78 & CaseID!= 112 )
+
+
+#Rename The columns in both data frames so they match and allow for merging
+names(Study2A_processed) <-c("CaseID", "Desirability_condition", "Consent", "English_Fluency", "Over_18", 
+                             "Age", "Gender", "Gender_text", "Been_in_prison", "Criminal1_UH1_cultured.corrupt", 
+                             "Criminal1_UH2_civilised.controlling", "Criminal1_UH3_sophisticated.arrogant", 
+                             "Criminal1_UH4_moral.bitter", "Criminal1_HN1_generous.jealous", "Criminal1_HN2_open-minded.selfish", 
+                             "Criminal1_HN3_warm.spiteful", "Criminal1_HN4_kind.cruel", "Criminal1_harm", 
+                             "Criminal2_UH1_cultured.corrupt", "Criminal2_UH2_civilised.controlling", 
+                             "Criminal2_UH3_sophisticated.arrogant", "Criminal2_UH4_moral.bitter", 
+                             "Criminal2_HN1_generous.jealous", "Criminal2_HN2_open-minded.selfish", "Criminal2_HN3_warm.spiteful", 
+                             "Criminal2_HN4_kind.cruel", "Criminal2_harm", "Criminal3_UH1_cultured.corrupt", 
+                             "Criminal3_UH2_civilised.controlling", "Criminal3_UH3_sophisticated.arrogant", 
+                             "Criminal3_UH4_moral.bitter", "Criminal3_HN1_generous.jealous", "Criminal3_HN2_open-minded.selfish", 
+                             "Criminal3_HN3_warm.spiteful", "Criminal3_HN4_kind.cruel", "Criminal3_harm", "Criminal4_UH1_cultured.corrupt", 
+                             "Criminal4_UH2_civilised.controlling", "Criminal4_UH3_sophisticated.arrogant", "Criminal4_UH4_moral.bitter", 
+                             "Criminal4_HN1_generous.jealous", "Criminal4_HN2_open-minded.selfish", "Criminal4_HN3_warm.spiteful", 
+                             "Criminal4_HN4_kind.cruel", "Criminal4_harm", "Criminal5_UH1_cultured.corrupt", 
+                             "Criminal5_UH2_civilised.controlling", "Criminal5_UH3_sophisticated.arrogant", 
+                             "Criminal5_UH4_moral.bitter", "Criminal5_HN1_generous.jealous", "Criminal5_HN2_open-minded.selfish", 
+                             "Criminal5_HN3_warm.spiteful", "Criminal5_HN4_kind.cruel", "Criminal5_harm", "UH_mean", "HN_mean", 
+                             "Harm_mean", "Outlier_Animalistic_model", "Outlier_Mechanistic_model", "Study")
+
+names(Study2B_processed) <-c("CaseID", "Desirability_condition", "Consent", "English_Fluency", "Over_18", 
+                              "Age", "Gender", "Gender_text", "Been_in_prison", "Criminal1_UH1_cultured.corrupt", 
+                              "Criminal1_UH2_civilised.controlling", "Criminal1_UH3_sophisticated.arrogant", 
+                              "Criminal1_UH4_moral.bitter", "Criminal1_HN1_generous.jealous", "Criminal1_HN2_open-minded.selfish", 
+                              "Criminal1_HN3_warm.spiteful", "Criminal1_HN4_kind.cruel", "Criminal1_harm", 
+                              "Criminal2_UH1_cultured.corrupt", "Criminal2_UH2_civilised.controlling", 
+                              "Criminal2_UH3_sophisticated.arrogant", "Criminal2_UH4_moral.bitter", 
+                              "Criminal2_HN1_generous.jealous", "Criminal2_HN2_open-minded.selfish", "Criminal2_HN3_warm.spiteful", 
+                              "Criminal2_HN4_kind.cruel", "Criminal2_harm", "Criminal3_UH1_cultured.corrupt", 
+                              "Criminal3_UH2_civilised.controlling", "Criminal3_UH3_sophisticated.arrogant", 
+                              "Criminal3_UH4_moral.bitter", "Criminal3_HN1_generous.jealous", "Criminal3_HN2_open-minded.selfish", 
+                              "Criminal3_HN3_warm.spiteful", "Criminal3_HN4_kind.cruel", "Criminal3_harm", "Criminal4_UH1_cultured.corrupt", 
+                              "Criminal4_UH2_civilised.controlling", "Criminal4_UH3_sophisticated.arrogant", "Criminal4_UH4_moral.bitter", 
+                              "Criminal4_HN1_generous.jealous", "Criminal4_HN2_open-minded.selfish", "Criminal4_HN3_warm.spiteful", 
+                              "Criminal4_HN4_kind.cruel", "Criminal4_harm", "Criminal5_UH1_cultured.corrupt", 
+                              "Criminal5_UH2_civilised.controlling", "Criminal5_UH3_sophisticated.arrogant", 
+                              "Criminal5_UH4_moral.bitter", "Criminal5_HN1_generous.jealous", "Criminal5_HN2_open-minded.selfish", 
+                              "Criminal5_HN3_warm.spiteful", "Criminal5_HN4_kind.cruel", "Criminal5_harm", "UH_mean", "HN_mean", 
+                              "Harm_mean", "Outlier_Animalistic_model", "Outlier_Mechanistic_model", "Study")
+
+#combine data file 
+Study2_processed_combined <- rbind(Study2A_processed, Study2B_processed)
+
+# combined plot
+
+d.plot_2 <- Study2_processed_combined %>% select(c(CaseID, Desirability_condition, UH_mean, HN_mean, Harm_mean, Study))
+
+d.plot_2 <- d.plot_2 %>% pivot_longer(
+  cols = -c(CaseID, Desirability_condition, Harm_mean, Study), 
+  names_to = c("Humanness_dimension"),
+  values_to = "Rating")
+
+#whole plot
+d.plot_2$Desirability_condition <- as.factor(d.plot_2$Desirability_condition)
+d.plot_2$Desirability_condition <- recode_factor(d.plot_2$Desirability_condition, "0" = 'Desirable', "1" = 'Undesirable')
+
+d.plot_2$Humanness_dimension <- as.factor(d.plot_2$Humanness_dimension)
+d.plot_2$Humanness_dimension <- recode_factor(d.plot_2$Humanness_dimension, 
+                                              "UH_mean" = 'Uniquely human traits', "HN_mean" = 'Human nature traits')
+
+d.plot_2$Study <- as.factor(d.plot_2$Study)
+d.plot_2$Study <- recode_factor(d.plot_2$Study, "2A" = 'Violent criminals (2A)', "2B" = 'Thieves (2B)')
+
+plot2 <- ggplot(d.plot_2,aes(y=Harm_mean,x=Rating,color=Desirability_condition))+
+  geom_point(size=.5, alpha = .6)+
+  geom_smooth(method="lm", se=TRUE, fullrange=FALSE, level=0.95, aes(fill=Desirability_condition), size = .5, alpha = .4) +
+  scale_y_continuous(name = 'Harshness of punishment endorsed (0-100)', breaks = seq(0, 100, 20), limits = c(-5, 100)) +
+  scale_x_continuous(name = 'Trait attribution (0-100)',breaks = seq(0, 100, 20), limits = c(0, 100)) + 
+  theme_light() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                        legend.position = "top", legend.text = element_text(size=14), legend.title = element_text(size = 14)) +
+  theme(axis.text=element_text(size = 14, colour = "black"), axis.title=element_text(size = 14)) + 
+  facet_grid(switch = "y", ~ Study ~ Humanness_dimension ) +
+  theme(strip.text = element_text(size = 14), strip.background = element_rect(fill = 'grey55')) +
+  scale_fill_manual(name = 'Trait desirability', values = c('#1A85FF', '#D41159')) +
+  scale_color_manual(name  = 'Trait desirability', values = c('#1A85FF', '#D41159')) 
+plot2
+ggsave('figures/plot2.pdf', plot2, width = 7, height = 7, dpi = 300)
+
+```
+
+Study 2A investigated whether apparent evidence for a relationship between trait-based dehumanization and endorsement of harsh punishment for violent criminals remains when controlling for the desirability of the traits. We tested this by introducing character traits perceived as uniquely human yet socially undesirable into the stimulus set [@Enock2021a; @Over2020a]. The dual model predicts that to the extent criminals are denied uniquely human character traits, they will be subjected to harsher punishment. We predict that trait desirability will moderate the relationship between human trait attribution and punishment. More specifically, we predict that the extent to which violent criminals are denied socially desirable character traits, and attributed socially undesirable character traits, will predict harsh punishment. 
+
+## Method
+
+### Participants
+
+A power analysis using G\*Power indicated that a sample size of `r ceiling((Exp2APA$v)+(Exp2APA$u)+1)` would allow us to detect a medium effect size ($f^2$ = `r Exp2APA$f2`), with three predictors (trait attribution; trait desirability; attribution*desirability), an alpha of `r Exp2APA$sig.level` and power of `r Exp2APA$power`. To counterbalance the sample equally and allow for the exclusion of outliers, a sample of `r length(Study2A_numeric$CaseID)` was collected. Within the sample, `r genderTable2A$Freq[1]` identified as female, `r genderTable2A$Freq[2]` as male, and `r genderTable2A$Freq[3]` as non-binary. Ages ranged from `r min(Study2A_numeric$Age)` to `r max(Study2A_numeric$Age)` ($M$ = `r round (mean(Study2A_numeric$Age), digits = 2)`, $SD$ = `r round (sd(Study2A_numeric$Age), digits = 2)`). Similar to Studies 1A and 1B, two attention checks were included in this study. As per our preregistered plan, 16 participants failed one or both attention checks; thus, their data were omitted and replaced. Participation took an average of nearly eight minutes.
+
+### Design
+
+This study utilised a mixed design. All participants responded to items designed to measure animalistic dehumanization and mechanistic dehumanization. The desirability of the traits rated by participants was manipulated between subjects: half of the participants rated criminals on the extent to which they possessed socially desirable traits, and half rated criminals on the extent to which they possessed undesirable traits. All participants responded to a single item measuring the harshness of punishment endorsed.
+
+### Materials
+
+**Vignettes**. All participants read the same vignettes describing violent crimes as in Study 1A.
+
+**Trait attribution**. After reading each vignette, participants responded to an 8-item scale measuring animalistic dehumanization (4 items) and mechanistic dehumanization (4 items) of the criminal portrayed. Participants made trait attributions by indicating their agreement with each item using an unmarked sliding scale ranging from 0 ('*Strongly Disagree*') to 100 ('*Strongly Agree*'), all of which were initially positioned at the scale's midpoint. Depending on the condition, the eight trait items were either socially desirable (*uniquely human: cultured, civilised, sophisticated, moral; human nature: generous, open-minded, warm, kind*) or socially undesirable (*uniquely human: corrupt, controlling, arrogant, bitter; human nature: jealous selfish, spiteful, cruel*). The lower the score, the more participants dehumanize the criminal target by denying them human traits.
+
+**Harshness of punishment endorsed**. The same single-item scale for measuring the harshness of punishment endorsed in Studies 1A and 1B was employed in Study 2A.  
+
+### Procedure
+ 
+The procedure in Study 2A mirrored that of Studies 1A and 1B.
+
+## Results
+
+### Model 1: Animalistic dehumanization and punishment
+
+Eight highly influential cases were omitted from the analysis (remaining sample *N* = `r length(UH_harm_rmCooks_data$CaseID)`). The regression model tested for a relationship between participants' average scores for uniquely human trait attribution and harshness of punishment endorsed with trait desirability included as a moderator (desirable = 0, undesirable = 1).
+
+The moderated regression showed no significant effect of uniquely human trait attribution on punishment, $b$ = `r round(exp2AUHBeta$estimate[2], digits = 2)`  [`r round(exp2AUHBeta$conf.low[2], digits = 2)`,  `r round(exp2AUHBeta$conf.high[2], digits = 2)`], $t$ = `r round(exp2AUHBeta$statistic[2], digits = 2)`, $p$ = `r format.pval(exp2AUHBeta$p.value[2], digits = 2, eps = 0.001, nsmall = 3)`. Thus, when undesirable uniquely human traits were included in the measure of animalistic dehumanization, the previously reported relationship between animalistic dehumanization and the endorsement of harsher punishment [@Bastian2013] was no longer significant.
+
+The interaction between uniquely human trait attribution and trait desirability was significant, $b$ = `r round(exp2AUHBeta$estimate[4], digits = 2)` [`r round(exp2AUHBeta$conf.low[4], digits = 2)`,  `r round(exp2AUHBeta$conf.high[4], digits = 2)`], $t$ = `r round(exp2AUHBeta$statistic[4], digits = 2)`, $p$ = `r format.pval(exp2AUHBeta$p.value[4], digits = 2, eps = 0.001, nsmall = 3)`. In line with our prediction, simple slopes showed that the more socially desirable human traits participants attributed to criminals, the less harshly participants thought they should be punished, $b$ = `r round(exp2AUHSlope$simslopes$slopes$Est.[2], digits = 2)`, [`r round(exp2AUHSlope$simslopes$slopes$"2.5%"[2], digits = 2)`, `r round(exp2AUHSlope$simslopes$slopes$"97.5%"[2], digits = 2)`], $t$ = `r round(exp2AUHSlope$simslopes$slopes$"t val."[2], digits = 2)`, $p$ = `r format.pval(exp2AUHSlope$simslopes$slopes$"p"[2], digits = 2, eps = 0.001, nsmall = 3)`. The more undesirable traits participants attributed to criminals, the more harshly participants thought they should be punished, $b$ = `r round(exp2AUHSlope$simslopes$slopes$Est.[1], digits = 2)`, [`r round(exp2AUHSlope$simslopes$slopes$"2.5%"[1], digits = 2)`, `r round(exp2AUHSlope$simslopes$slopes$"97.5%"[1], digits = 2)`], $t$ = `r round(exp2AUHSlope$simslopes$slopes$"t val."[1], digits = 2)`, $p$ = `r format.pval(exp2AUHSlope$simslopes$slopes$"p"[1], digits = 2, eps = 0.001, nsmall = 3)` (see Figure \@ref(fig:figure2)). The model explained approximately `r round((exp2AUHR2$r.squared * 100), digits = 0)`% of the variance in the harshness of punishment endorsed, $R^2$ = `r round(exp2AUHR2$r.squared, digits = 2)`, $F$(`r round(exp2AUHR2$fstatistic[2], digits = 0)`, `r round(exp2AUHR2$fstatistic[3], digits = 0)`) = `r round(exp2AUHR2$fstatistic[1], digits = 2)`.
+
+### Model 2: Mechanistic dehumanization and punishment
+
+Eight highly influential cases were omitted from the analysis (remaining sample *N* = `r length(HN_harm_rmCooks_data$CaseID)`). A moderated regression analysis tested for a relationship between the average scores of human trait attribution and harshness of punishment endorsed to violent criminals and whether this interacted with trait desirability.
+
+The moderated regression showed no significant effects of human nature trait attribution on punishment, $b$ = `r round(exp2AHNBeta$estimate[2], digits = 2)`  [`r round(exp2AHNBeta$conf.low[2], digits = 2)`,  `r round(exp2AHNBeta$conf.high[2], digits = 2)`], $t$ = `r round(exp2AHNBeta$statistic[2], digits = 2)`, $p$ = `r format.pval(exp2AHNBeta$p.value[2], digits = 2, eps = 0.001, nsmall = 3)`. The effect reported by Bastian and colleagues [-@Bastian2013], whereby mechanistic dehumanization predicted harsher punishment endorsement, which we replicated in Studies 1A and 1B, did not appear when undesirable human nature traits were included in our measures.
+
+The interaction between uniquely human trait attribution and trait desirability was significant, $b$ = `r round(exp2AHNBeta$estimate[4], digits = 2)`  [`r round(exp2AHNBeta$conf.low[4], digits = 2)`,  `r round(exp2AHNBeta$conf.high[4], digits = 2)`], $t$ = `r round(exp2AHNBeta$statistic[4], digits = 2)`, $p$ = `r format.pval(exp2AHNBeta$p.value[4], digits = 2, eps = 0.001, nsmall = 3)`. Simple slopes indicated that the more participants attributed socially desirable traits to criminals, the less harshly they thought those criminals should be punished $b$ = `r round(exp2AHNSlope$simslopes$slopes$Est.[1], digits = 2)`, [`r round(exp2AHNSlope$simslopes$slopes$"2.5%"[1], digits = 2)`, `r round(exp2AHNSlope$simslopes$slopes$"97.5%"[1], digits = 2)`], $t$ = `r round(exp2AHNSlope$simslopes$slopes$"t val."[1], digits = 2)`, $p$ = `r format.pval(exp2AHNSlope$simslopes$slopes$"p"[1], digits = 2, eps = 0.001, nsmall = 3)`. As shown in Figure \@ref(fig:figure2), the more participants attributed socially undesirable traits to criminals, the more harshly they thought those criminals should be punished, $b$ = `r round(exp2AHNSlope$simslopes$slopes$Est.[2], digits = 2)`, [`r round(exp2AHNSlope$simslopes$slopes$"2.5%"[2], digits = 2)`, `r round(exp2AHNSlope$simslopes$slopes$"97.5%"[2], digits = 2)`], $t$ = `r round(exp2AHNSlope$simslopes$slopes$"t val."[2], digits = 2)`, $p$ = `r format.pval(exp2AHNSlope$simslopes$slopes$"p"[2], digits = 2, eps = 0.001, nsmall = 3)`. The model explained `r round((exp2AHNR2$r.squared * 100), digits = 0)`% of the variance in the harshness of punishment scores, $R^2$ = `r round(exp2AHNR2$r.squared, digits = 2)`, $F$(`r round(exp2AHNR2$fstatistic[2], digits = 0)`, `r round(exp2AHNR2$fstatistic[3], digits = 0)`) = `r round(exp2AHNR2$fstatistic[1], digits = 2)`.
+
+```{r figure2, fig.cap="Results of Study 2: The relationship between trait attribution and punishment for violent criminals (Study 2A, top) and thieves (Study 2B, bottom) depends on the social desirability of the traits.", fig.align="center", echo=FALSE}
+
+knitr::include_graphics('figures/plot2.pdf')
+```
+
+# Study 2B
+
+Study 2B sought to replicate the results of Study 2A but with thieves as the target group rather than violent criminals. We examined whether the apparent relationship between trait-based dehumanization and the endorsement of harsh punishment for thieves is better explained by the desirability of the traits incorporated into the stimulus set. We investigate this question using a very similar design and procedure to Study 2A, with the exception that the vignettes are those used in Study 1B detailing crimes involving theft. As in Study 2A, we hypothesise that trait desirability will moderate the relationship between human trait attribution and punishment. More specifically, we predict the extent to which criminals are denied socially desirable character traits, and attributed socially undesirable character traits, will predict endorsement of harsher punishment.
+
+## Method
+
+```{r Exp2BAnalysis, include=FALSE}
+
+rm(list = ls()) #removes everything 
+graphics.off()# takes plots out the viewer 
+
+Study2B_numeric <- read.csv('data/DMHARM_2B_Thieves_data.csv', header = TRUE, stringsAsFactors = F)
+genderTable2B <- data.frame(table(Study2B_numeric$Gender))
+
+#Mean centre continuous predictors 
+#Study2B_centred <-gscale(data= Study2B_numeric, vars=c("UH_mean", "HN_mean", "trait_condition"), center.only=TRUE)
+#create moderation model
+UH_harm <- lm(Harm_mean ~ UH_mean*Desirability_condition, data = Study2B_numeric)
+summary(UH_harm) #Review the results
+gvlma(UH_harm) #All are accepted 
+
+HN_harm <- lm(Harm_mean ~ HN_mean*Desirability_condition, data = Study2B_numeric)
+summary(HN_harm) #Review the results
+gvlma(HN_harm) #All are accepted other than link function, doesn't matter about this one 
+
+# Check influential scores UH with Cooks -------------------------------------
+
+gvlma(UH_harm) 
+summary(gvlma(UH_harm))
+par(mfrow = c(1, 2))
+# plot(gvlma(UH_harm))
+
+#Augment data to add fitted values and residuals by using the function augment() [broom package]. 
+#Aall the output model1.diag.metrics because it contains several metrics useful for regression diagnostics
+
+model1.diag.metrics <- augment(UH_harm)
+head(model1.diag.metrics)
+
+# dev.off()
+
+# plot(UH_harm, 5) #looks like there some outliers (over 3 standardised residuals)
+#And, several scores have high leverage 2(3+1)/130 = .06. 
+
+#Influential values - Cooks - 4/(n - p - 1) - 4/(130 - 3 - 1) = .032. 
+
+# dev.off() 
+
+#put them in a line in same output plot space - can see a few outlier/high lev/influentials
+#par(mfrow = c(1, 2)) 
+# plot(UH_harm, 4, id.n = 8)
+# abline(h =.032)
+
+# Residuals vs Leverage
+# plot(UH_harm, 5)
+
+#Can see here there are 8 that go over .032 - 19, 23, 25, 29, 48, 56, 77, 112
+model1.diag.metrics %>%
+  top_n(8, wt = .cooksd)
+
+# dev.off()
+# Residuals vs Leverage, check where the 8 found lie
+# plot(UH_harm, 5, id.n = 8)
+
+#Extra point about independence of residuals. We typically only worry if we have reason to suspect correlation, e.g. DV repeatedly measured over time.
+#But can test using durbin watson (want non sig. value)
+durbinWatsonTest(UH_harm)
+
+# Remove influential cases UH ------------------------------------------------
+UH_harm_rmCooks_data <- subset(Study2B_numeric, CaseID!= 19 & CaseID!= 23 &
+                                 CaseID!= 25 & CaseID!= 29 &
+                                 CaseID!= 48 & CaseID!= 56 &
+                                 CaseID!= 77 & CaseID!= 112)
+
+UH_harm_rmCooks_data_centred <-gscale(data= UH_harm_rmCooks_data, vars=c("UH_mean", "HN_mean", "Desirability_condition"), center.only=TRUE)
+
+##write.csv(UH_harm_rmCooks_data,"...//Study2B_UH_harm_rmCooks_data.csv", row.names = FALSE)
+
+# Processed Animalistic moderation model results ----
+UH_harm_processed <- lm(Harm_mean ~ UH_mean*Desirability_condition, data = UH_harm_rmCooks_data_centred)
+gvlma(UH_harm_processed) #All are accepted 
+
+exp2BUHR2 <- summary(UH_harm_processed) 
+exp2BUHBeta <- tidy(UH_harm_processed, conf.int = TRUE)
+exp2BUHSlope <- probe_interaction(UH_harm_processed, pred = UH_mean, modx = Desirability_condition, confint = TRUE)
+
+probe_interaction(UH_harm_processed,pred=UH_mean,modx=Desirability_condition) #same as SPSS follow ups ...
+
+# Check influential scores HN with Cooks -------------------------------------
+
+gvlma(HN_harm) 
+summary(gvlma(HN_harm))
+# par(mfrow = c(1, 2))
+# plot(gvlma(HN_harm))
+
+#Augment your data to add fitted values and residuals by using the function augment() [broom package]. 
+#Aall the output model1.diag.metrics because it contains several metrics useful for regression diagnostics, described in following. 
+
+model2.diag.metrics <- augment(HN_harm)
+head(model2.diag.metrics)
+
+# dev.off()
+# plot(HN_harm, 5) #looks like there some outliers (over 3 standardised residuals)
+#And, several scores have high leverage 2(3+1)/130 = .06. 
+
+#Influential values - Cooks - 4/(n - p - 1) - 4/(130 - 3 - 1) = .032. 
+
+# dev.off() 
+
+#par(mfrow = c(1, 2)) #puts them in a line in same output plot space - can see a few outlier/high lev/influentials
+# plot(HN_harm, 4, id.n = 6)
+# abline(h =.032)
+
+# Residuals vs Leverage
+# plot(HN_harm, 5)
+
+# Top 3 observations with the highest Cooks distance:
+model2.diag.metrics %>%
+  top_n(10, wt = .cooksd)
+
+#There are six that go over .032 - 19, 25, 29, 56, 78, 112
+model2.diag.metrics %>%
+  top_n(8, wt = .cooksd)
+
+# dev.off()
+# Residuals vs Leverage, check where the 8 found lie
+# plot(HN_harm, 5, id.n = 8)
+
+#Extra point about independence of residuals. We typically only worry if we have reason to suspect correlation, e.g. DV repeatedly measured over time.
+#But can test using durbin watson (want non sig. value)
+durbinWatsonTest(HN_harm)
+
+# Remove influential cases HN ------------------------------------------------
+
+HN_harm_rmCooks_data <- subset(Study2B_numeric, CaseID!= 19 & CaseID!= 25 &
+                                 CaseID!= 29 & CaseID!= 56 &
+                                 CaseID!= 78 & CaseID!= 112)
+
+HN_harm_rmCooks_data_centred <-gscale(data= HN_harm_rmCooks_data, vars=c("UH_mean", "HN_mean", "Desirability_condition"), center.only=TRUE)
+
+#Processed Mechanistic moderation model model results -----
+HN_harm_processed <- lm(Harm_mean ~ HN_mean*Desirability_condition, data = HN_harm_rmCooks_data_centred)
+gvlma(HN_harm_processed) #All are accepted
+
+exp2BHNR2 <- summary(HN_harm_processed)
+exp2BHNBeta <- tidy(HN_harm_processed, conf.int = TRUE)
+exp2BHNSlope <- probe_interaction(HN_harm_processed, pred = HN_mean, modx = Desirability_condition, confint = TRUE)
+
+```
+
+### Participants
+
+The power analysis described in Study 2A informed the sample size for Study 2B. A separate sample of `r length(Study2B_numeric$CaseID)` participants was collected, of whom `r genderTable2B$Freq[2]` identified as male, `r genderTable2B$Freq[1]` as female, and `r spell_out(genderTable2B$Freq[3])` as non-binary. Ages ranged from `r min(Study2B_numeric$Age)` to `r max(Study2B_numeric$Age)` (*M*= `r round(mean(Study2B_numeric$Age),digits=1)`, *SD* = `r round(sd(Study2B_numeric$Age),digits=2)`). Data submitted by 20 participants who did not pass one or both checks were omitted and replaced. Participation took an average of nine and a half minutes.
+
+### Design
+
+This study utilised a mixed-methods design, matching that of Study 2A. The same attention checks used in Studies 1A, 1B and 2A were used in Study 2B.
+
+### Materials
+
+**Vignettes**. All participants responded to the same five vignettes used in Study 1B detailing scenarios involving criminals committing theft.
+
+**Trait attribution**. The same scales for measuring animalistic dehumanization, mechanistic dehumanization, and punishment used in Study 2A were used in Study 2B. 
+
+### Procedure
+
+The procedure in Study 2B was identical to that of Study 2A, except for the vignettes describing crimes involving theft rather than violence.
+
+## Results
+
+### Model 1: Animalistic dehumanization and punishment
+
+Eight highly influential cases were omitted from the analysis (remaining sample *N* = `r length(UH_harm_rmCooks_data$CaseID)`). A moderated regression tested for a relationship between average scores of uniquely human traits and harshness of punishment endorsed and whether this interacted with trait desirability. The moderated regression showed no significant effects of uniquely human trait attribution on punishment *b* = `r round(exp2BUHBeta$estimate[2], digits = 2)`  [`r round(exp2BUHBeta$conf.low[2], digits = 2)`, `r round(exp2BUHBeta$conf.high[2], digits = 2)`], *t* = `r round(exp2BUHBeta$statistic[2], digits = 2)`, *p* = `r format.pval(exp2BUHBeta$p.value[2], digits = 3)`. Replicating the results of Study 2A, when socially undesirable traits were incorporated into the stimulus set, there was no longer any relationship between trait-based dehumanization and punishment.
+
+The interaction between uniquely human trait attribution and trait desirability was significant, *b* = `r round(exp2BUHBeta$estimate[4], digits = 2)` [`r round(exp2BUHBeta$conf.low[4], digits = 2)`, `r round(exp2BUHBeta$conf.high[4], digits = 2)`], *t* = `r round(exp2BUHBeta$statistic[4], digits = 2)`, *p* = `r format.pval(exp2BUHBeta$p.value[4], digits = 2, eps = 0.001, nsmall = 3)`. As illustrated in Figure \@ref(fig:figure2), the more participants attributed socially desirable traits to criminals, the less harshly participants felt they should be punished, *b* = `r round(exp2BUHSlope$simslopes$slopes$Est.[1], digits = 2)`, [`r round(exp2BUHSlope$simslopes$slopes$"2.5%"[1], digits = 2)`, `r round(exp2BUHSlope$simslopes$slopes$"97.5%"[1], digits = 2)`], *t* = `r round(exp2BUHSlope$simslopes$slopes$"t val."[1], digits = 2)`, *p* = `r format.pval(exp2BUHSlope$simslopes$slopes$"p"[1], digits = 2, eps = 0.001, nsmall = 3)`. The more participants attributed undesirable traits to criminals, the more harshly participants felt they should be punished, *b* = `r round(exp2BUHSlope$simslopes$slopes$Est.[2], digits = 2)`, [`r round(exp2BUHSlope$simslopes$slopes$"2.5%"[2], digits = 2)`, `r round(exp2BUHSlope$simslopes$slopes$"97.5%"[2], digits = 2)`], *t* = `r round(exp2BUHSlope$simslopes$slopes$"t val."[2], digits = 2)`, *p* = `r format.pval(exp2BUHSlope$simslopes$slopes$"p"[2], digits = 2, eps = 0.001, nsmall = 3)`. The model explained about `r round((exp2BUHR2$r.squared * 100), digits = 0)`% of the variance in endorsed harshness of punishment scores, $R^2$ = `r round(exp2BUHR2$r.squared, digits = 2)`, $F$(`r round(exp2BUHR2$fstatistic[2], digits = 0)`, `r round(exp2BUHR2$fstatistic[3], digits = 0)`) = `r round(exp2BUHR2$fstatistic[1], digits = 2)`.
+
+### Model 2: Mechanistic dehumanization and punishment
+
+The analysis omitted six highly influential cases (remaining sample *N* = `r length(HN_harm_rmCooks_data$CaseID)`). A regression tested for a relationship between human trait attribution and punishment and whether this interacted with trait desirability. As in Study 2A, and contradicting the findings of Bastian and colleagues [-@Bastian2013], the moderated regression showed no significant relationship between human trait attribution and punishment, *b* = `r round(exp2BHNBeta$estimate[2], digits = 2)`  [`r round(exp2BHNBeta$conf.low[2], digits = 2)`,  `r round(exp2BHNBeta$conf.high[2], digits = 2)`], *t* = `r round(exp2BHNBeta$statistic[2], digits = 2)`, *p* = `r format.pval(exp2BHNBeta$p.value[2], digits = 3)`.
+
+However, the interaction between human nature trait attribution and trait desirability was significant, *b* = `r round(exp2BHNBeta$estimate[4], digits = 2)`  [`r round(exp2BHNBeta$conf.low[4], digits = 2)`,  `r round(exp2BHNBeta$conf.high[4], digits = 2)`], *t* = `r round(exp2BHNBeta$statistic[4], digits = 2)`, *p* = `r format.pval(exp2BHNBeta$p.value[4], digits = 2, eps = 0.001, nsmall = 3)`. As can be seen in Figure \@ref(fig:figure2), simple slopes showed that the more participants attributed socially desirable human traits to criminals, the less harshly participants thought they should be punished, *b* = `r round(exp2BHNSlope$simslopes$slopes$Est.[1], digits = 2)`, [`r round(exp2BHNSlope$simslopes$slopes$"2.5%"[1], digits = 2)`, `r round(exp2BHNSlope$simslopes$slopes$"97.5%"[1], digits = 2)`], *t* = `r round(exp2BHNSlope$simslopes$slopes$"t val."[1], digits = 2)`, *p* = `r format.pval(exp2BHNSlope$simslopes$slopes$"p"[1], digits = 1)`. The more participants attributed socially undesirable human traits to criminals, the more harshly participants thought they should be punished, *b* = `r round(exp2BHNSlope$simslopes$slopes$Est.[2], digits = 2)`, [`r round(exp2BHNSlope$simslopes$slopes$"2.5%"[2], digits = 2)`, `r round(exp2BHNSlope$simslopes$slopes$"97.5%"[2], digits = 2)`], *t* = `r round(exp2BHNSlope$simslopes$slopes$"t val."[2], digits = 2)`, *p* = `r format.pval(exp2BHNSlope$simslopes$slopes$"p"[2], digits = 2, eps = 0.001, nsmall = 3)`. The model explained about `r round((exp2BHNR2$r.squared * 100), digits = 0)`% of the variance in endorsed harshness of punishment scores, $R^2$ = `r round(exp2BHNR2$r.squared, digits = 2)`, $F$(`r round(exp2BHNR2$fstatistic[2], digits = 0)`, `r round(exp2BHNR2$fstatistic[3], digits = 0)`) = `r round(exp2BHNR2$fstatistic[1], digits = 2)`. These data suggest that the apparent relationships between animalistic and mechanistic dehumanization and punishment reported in previous research [@Bastian2013] are better explained by the social desirability of the traits.
+
+# Study 3A
+
+In Study 3A, we used an experimental design to examine further the hypothesised causal relationship between trait-based dehumanization and punishment when controlling for the social desirability of human traits incorporated into the stimuli. We described criminals with traits that varied in desirability and perceived humanness creating a $2 \times 2$ design. We then measured participants' willingness to endorse parole for each criminal described. The dual model predicts that criminals who are described in uniquely human terms will be more likely to be granted parole. We predicted that criminals described in socially desirable terms will be more likely to be granted parole. In principle, this design allows us to detect independent effects of dehumanization and trait sociability or an interaction between the two. In Study 3A, we specifically measure the extent to which animalistic dehumanization is causally related to parole decisions. Thus, we included uniquely human traits and those shared with other animals in our measures. We predict that participants will be more likely to endorse parole for criminals described with socially desirable traits, regardless of whether or not those traits are uniquely human or shared with other animals.
+
+## Methods
+
+```{r 3amethods, echo = FALSE}
+
+#read in data
+
+Study3A_Data <- read.csv('data/DMHARM_Study 3A_Animalistic_data.csv', header = TRUE, stringsAsFactors = F)
+
+#calculate particpant mean/sd for ages
+
+age_mean3A <- mean(Study3A_Data$Age)
+age_sd3A <- sd(Study3A_Data$Age)
+
+#min and max ages
+
+min_age3A <- min(Study3A_Data$Age)
+max_age3A <- max(Study3A_Data$Age)
+
+#gender data
+
+gen_data3A <- table(Study3A_Data$Gender)
+
+ex3power <- pwr.f2.test(u=1,v=135,sig.level=0.05,power=0.95)
+
+```
+
+### Participants
+
+A power analysis using G\*Power indicated that a sample size of 135 would allow us to detect a medium effect size ($\eta_p^2$ = .09) with a $2 \times 2$ factorial design, an alpha of .05 and a power of .95. To counterbalance the sample equally, a sample of 136 participants was collected, of whom `r gen_data3A[1]` identified as female, `r gen_data3A[2]` as male, `r gen_data3A[3]` as non-binary, and `r gen_data3A[4]` who preferred not to indicate their gender identity.  Ages ranged from `r min_age3A` to `r max_age3A` (*M* = `r round(age_mean3A, digits = 1)`, *SD* = `r round(age_sd3A, digits = 2)`).  All participants were adults fluent in English who had never been to prison for committing a crime.  Due to a noticeable increase in failed attention checks during pilot data collection, the minimal approval rating on Prolific was raised from 90% to 95%.  Despite this, data from 46 participants were omitted and replaced due to failed attention checks. Three participants were mistakenly recruited after the intended sample size had been met, and thus, their data were excluded from analyses^[Including data submitted by excess participants in analyses yielded the same results as those reported.]. Participation took an average of seven minutes.
+
+### Materials
+
+**Vignettes**. All participants responded to the same four vignettes, each detailing a different scenario in which a criminal's eligibility for parole was assessed. Efforts were made to ensure that all four vignettes were similar in length, degree of detail, and contextual aspects, such as how long the criminal had spent in prison and who was described as attributing the traits to the criminal. In each vignette, the criminal's name and pronouns were gender-neutral, their age and ethnicity were not indicated, and their crime and sentence were not specified. The four vignettes can be seen in the Supplementary materials. In the uniquely human socially desirable condition, the criminal was described as *cultured, civilised, sophisticated*, and *moral*, while in the uniquely human condition socially undesirable, the criminal was described as *corrupt, controlling, arrogant* and *bitter*. In the animalistic desirable condition, the criminal was described as *energetic, trusting, genuine* and *having curiosity*, while in the animalistic undesirable condition, the criminal was described as *uncultured, unrefined, unsophisticated*, and *stupid*.
+
+The following is an example of a vignette describing a criminal with uniquely human, socially desirable traits: "*Alex, known by locals in their hometown as having always been sophisticated, has recently begun their first parole hearing at the local courthouse. Having been tried and convicted 36 months ago, a report by one of the prison's counsellors notes that other prisoners often refer to Alex as being civilised and moral in character. Alex was also described by the counsellor as exhibiting a cultured demeanour since their arrival*."
+
+**Agreement with parole**. The dependent variable, agreement with granting parole, was measured using the following single-item measure: '*I think (Alex/Sam/Robin/Jamie) should be granted parole*'. This measure appeared after each vignette, and participants indicated their agreement using an unmarked sliding scale ranging from Strongly Disagree (0) to Strongly Agree (100). The slider's initial starting point was always centred at 50.
+
+**Attention check**. An additional paragraph was included, largely similar to the other four paragraphs, describing a criminal named Charlie. However, in the middle of the paragraph, the following sentence was included: '*This paragraph is an attention check: please move the slider all the way to Strongly Disagree on the left-hand side*'. Data submitted by any participants who did not respond within 20 points of the instructed end of the 100-point scale were omitted and replaced.
+
+### Design
+
+This study adopted a 2(trait humanness: uniquely human, shared) $\times$ 2(trait desirability: desirable, undesirable) within-subjects factorial design. Counterbalancing ensured that each vignette was associated with each trait category an equal number of times across the participant sample, resulting in four trait-type orders. The trait words were randomly allocated to the position in which they appeared in each vignette using a random order function in Excel. Mirror versions of the trait orders were then created. These two trait-order conditions were also counterbalanced between participants, which was done to control for possible primacy and recency effects of the order in which traits appeared.
+
+### Procedure
+
+After participants provided informed consent, they responded to the same demographic questions and inclusion checks as in the other studies. Participants were then shown the first of the four vignettes. After reading the vignette, participants were asked to respond to a single item measuring their agreement with granting parole to the criminal depicted. Participants then repeated the above steps for the remaining three vignettes. The order in which the vignettes were presented to participants was randomised. Each vignette appeared on the screen for at least 15 seconds to maximise the chance that participants read all the relevant information. Participants were debriefed and redirected to Prolific to collect their reward after completing the questionnaire.
+
+```{r study3aresults, echo = FALSE}
+
+#read in data
+
+Study3A_Data <- read.csv('data/DMHARM_Study 3A_Animalistic_data.csv', header = TRUE, stringsAsFactors = F)
+
+#transform data for ANOVA
+
+Study3A_mod <- cbind(Study3A_Data[1:8], stack(Study3A_Data[9:12])) #put all DV in one column
+
+#insert columns to define conditions and levels
+
+desirable <- vector(mode = "list", length = 0 )
+human <- vector(mode = "list", length = 0 )
+
+for (x in Study3A_mod$ind){
+  if (x == "UH.Desirable_.parole"){
+    desirable = c(desirable, 1);
+    human = c(human, 1)}
+  else if (x == "Non.UH.Desirable_parole"){
+    desirable = c(desirable, 1);
+    human = c(human,2)}
+  else if (x == "UH.Undesirable_parole"){
+    desirable = c(desirable, 2);
+    human = c(human,1)}
+  else if (x == "Non.UH.Undesirable_parole"){
+    desirable = c(desirable, 2);
+    human = c(human,2)}
+}
+  
+Study3A_mod$desirable <- factor(desirable, 
+                                levels = c(1,2), 
+                                labels = c("Desirable", "Undesirable"))
+Study3A_mod$human <- factor(human, 
+                            levels = c(1,2), 
+                            labels = c("Human", "Non-Human"))
+
+#perform the ANOVA
+
+aov_3a <- aov_ez('CaseID',
+                 'values',
+                 Study3A_mod,
+                 within = c('desirable','human'),
+                 anova_table = list('pes'))
+
+#neaten it because we aren't savages
+
+nice_3a <- nice(aov_3a, 
+                es = "pes", 
+                correction = "none",
+                sig_symbols = rep("",4))
+
+#descriptive statistics
+
+#means
+
+UH_desirable_mean <- mean(Study3A_Data$UH.Desirable_.parole)
+UH_undesirable_mean <- mean(Study3A_Data$UH.Undesirable_parole)
+nonUH_desirable_mean <- mean(Study3A_Data$Non.UH.Desirable_parole)
+nonUH_undesirable_mean <- mean(Study3A_Data$Non.UH.Undesirable_parole)
+
+human_mean <- (UH_desirable_mean + UH_undesirable_mean)/2
+nonhuman_mean <- (nonUH_desirable_mean + nonUH_undesirable_mean)/2
+desirable_mean <- (UH_desirable_mean + nonUH_desirable_mean)/2
+undesirable_mean <- (UH_undesirable_mean + nonUH_undesirable_mean)/2
+
+#standard errors
+
+#define a function to give standard error
+se <- function(nums){
+  ster <- sqrt(sum((nums-mean(nums))^2/(length(nums)-1)))/sqrt(length(nums))
+  return(ster)
+}
+
+#calculate SEs
+
+UH_desirable_se <- se(Study3A_Data$UH.Desirable_.parole)
+UH_undesirable_se <- se(Study3A_Data$UH.Undesirable_parole)
+nonUH_desirable_se <- se(Study3A_Data$Non.UH.Desirable_parole)
+nonUH_undesirable_se <- se(Study3A_Data$Non.UH.Undesirable_parole)
+
+human_se <- se(Study3A_Data$UH.Desirable_.parole + Study3A_Data$UH.Undesirable_parole)/2
+nonhuman_se <- se(Study3A_Data$Non.UH.Desirable_parole + Study3A_Data$Non.UH.Undesirable_parole)/2
+desirable_se <- se(Study3A_Data$UH.Desirable_.parole + Study3A_Data$Non.UH.Desirable_parole)/2
+undesirable_se <- se(Study3A_Data$UH.Undesirable_parole + Study3A_Data$Non.UH.Undesirable_parole)/2
+
+
+# combine for one-way ANOVAs
+
+Study3a_mod2 <- data.frame(NULL)
+counter <- 0
+for (n in 1:nrow(Study3A_Data)){
+  counter <- counter + 1
+  Study3a_mod2[counter,1:3] <- c(n,Study3A_Data$UH.Desirable_.parole[n],1)
+  counter <- counter + 1
+  Study3a_mod2[counter,1:3] <- c(n,Study3A_Data$UH.Undesirable_parole[n],2)
+}
+colnames(Study3a_mod2) <- c('CaseID','values','human')
+Study3a_mod2$human <- factor(Study3a_mod2$human, 
+                            levels = c(1,2), 
+                            labels = c("Human", "Non-Human"))
+
+aov_3a1 <- aov_ez('CaseID',
+                 'values',
+                 Study3a_mod2,
+                 within = c('human'),
+                 anova_table = list('pes'))
+
+#neaten it because we aren't savages
+
+nice_3a1 <- nice(aov_3a1, 
+                es = "pes", 
+                correction = "none",
+                sig_symbols = rep("",4))
+
+
+
+Study3a_mod3 <- data.frame(NULL)
+counter <- 0
+for (n in 1:nrow(Study3A_Data)){
+  counter <- counter + 1
+  Study3a_mod3[counter,1:3] <- c(n,Study3A_Data$Non.UH.Desirable_parole[n],1)
+  counter <- counter + 1
+  Study3a_mod3[counter,1:3] <- c(n,Study3A_Data$Non.UH.Undesirable_parole[n],2)
+}
+colnames(Study3a_mod3) <- c('CaseID','values','human')
+Study3a_mod3$human <- factor(Study3a_mod3$human, 
+                            levels = c(1,2), 
+                            labels = c("Human", "Non-Human"))
+
+aov_3a2 <- aov_ez('CaseID',
+                 'values',
+                 Study3a_mod3,
+                 within = c('human'),
+                 anova_table = list('pes'))
+
+#neaten it because we aren't savages
+
+nice_3a2 <- nice(aov_3a2, 
+                es = "pes", 
+                correction = "none",
+                sig_symbols = rep("",4))
+
+```
+
+## Results
+
+A $2 \times 2$ within-subjects ANOVA was conducted to examine how variations in the desirability (desirable or undesirable) and humanness (uniquely human or shared with other animals) of the traits used to describe criminals influenced participants' agreement with granting them parole. In line with our prediction, a significant main effect of trait desirability was found, *F*(`r nice_3a[1,2]`) = `r nice_3a[1,4]`, *p* = `r format.pval(nice_3a[1,6], digits = 3, eps = 0.001, nsmall = 3)`, $\eta_{p}^{2}$ = `r nice_3a[1,5]`. Criminals described with socially undesirable traits (*M* = `r round(undesirable_mean, digits = 2)`, *SE* = `r round(undesirable_se, digits = 2)`) were less likely to be granted parole than were those described with desirable traits (*M* = `r round(desirable_mean, digits = 1)`, *SE* = `r round(desirable_se, digits = 2)`); see Figure \@ref(fig:figure3). A main effect of trait humanness was also found, *F*(`r nice_3a[2,2]`) = `r nice_3a[2,4]`, *p* = `r format.pval(nice_3a[2,6], digits = 3, eps = 0.001, nsmall = 3)`, $\eta_{p}^{2}$ = `r nice_3a[2,5]`. Contrary to the predictions of the dual model, however, criminals who were described with uniquely human traits (*M* = `r round(human_mean, digits = 1)`, *SE*= `r round(human_se, digits = 2)`) were less likely to be granted parole than those described with traits shared with other animals (*M* = `r round(nonhuman_mean, digits = 1)`, *SE* = `r round(nonhuman_se, digits = 2)`). A significant interaction effect between trait humanness and trait desirability was also found, *F*(`r nice_3a[3,2]`) = `r nice_3a[3,4]`, *p* = `r format.pval(nice_3a[3,6], digits = 3, eps = 0.001, nsmall = 3)`, $\eta_{p}^{2}$ = `r nice_3a[3,5]`. Criminals described using undesirable uniquely human traits (*M* = `r round(UH_undesirable_mean, digits = 1)`, *SE* = `r round(UH_undesirable_se, digits = 2)`) were less likely to be granted parole than were criminals described using desirable uniquely human traits (*M* = `r round(UH_desirable_mean, digits = 1)`, *SE* = `r round(UH_desirable_se, digits = 2)`), *F*(`r nice_3a1[1,2]`) = `r nice_3a1[1,4]`, *p* = `r format.pval(nice_3a1[1,6], digits = 3, eps = 0.001, nsmall = 3)`, $\eta_{p}^{2}$ = `r nice_3a1[1,5]`. Similarly, criminals described using undesirable traits shared with other species (*M* = `r round(nonUH_undesirable_mean, digits = 1)`, *SE*= `r round(nonUH_undesirable_se, digits = 2)`) less likely to be granted parole than were those described using desirable traits shared with other species (*M* = `r round(nonUH_desirable_mean, digits = 1)`, *SE* = `r round(nonUH_desirable_se, digits = 2)`), *F*(`r nice_3a2[1,2]`) = `r nice_3a2[1,4]`, *p* = `r format.pval(nice_3a2[1,6], digits = 3, eps = 0.001, nsmall = 3)`, $\eta_{p}^{2}$ = `r nice_3a2[1,5]`.
+
+```{r createfig3, echo = FALSE, include=FALSE, warning=FALSE}
+
+graphics.off()# takes plots out the viewer 
+
+Study3A_Data <- read.csv('data/DMHARM_Study 3A_Animalistic_data.csv', header = TRUE, stringsAsFactors = F)
+Study3B_Data <- read.csv('data/DMHARM_Study 3B_Mechanistic_data.csv', header = TRUE, stringsAsFactors = F)
+
+#add column for which study
+Study3A_Data$Study <- c("3A")
+Study3B_Data$Study <- c("3B")
+
+# Change column names to be identical between 3A and 3B data frames
+names(Study3B_Data) <-c( "CaseID", "Consent", "English_fluency", "Over_18", "Age", 
+                              "Gender", "Gender_text", "Been_in_prison", "UH.Desirable_.parole", 
+                              "Non.UH.Desirable_parole", "UH.Undesirable_parole", "Non.UH.Undesirable_parole", "Study")
+
+names(Study3A_Data) <-c( "CaseID", "Consent", "English_fluency", "Over_18", "Age", 
+                         "Gender", "Gender_text", "Been_in_prison", "UH.Desirable_.parole", 
+                         "Non.UH.Desirable_parole", "UH.Undesirable_parole", "Non.UH.Undesirable_parole", "Study")
+
+#Merged Study 3 data
+Study3_Data <- rbind(Study3A_Data, Study3B_Data)
+
+#Create new participant IDs ('ID') for full Study 3 data frame
+Study3_Data$ID <- seq(1, nrow(Study3_Data))
+
+# simplify column names
+names(Study3_Data) <-c( "CaseID", "Consent", "English_fluency", "Over_18", "Age", 
+                         "Gender", "Gender_text", "Been_in_prison", "UH_D", 
+                         "NonUH_D", "UH_UnD", "NonUH_UnD", "Study", "ID")
+
+data_main <- Study3_Data %>% select(c(ID, Study, UH_D, UH_UnD, NonUH_D, NonUH_UnD))
+
+data_main <- data_main %>% pivot_longer(
+  cols = -c(ID, Study), 
+  names_to = c("Humanness", "Desirability"),
+  names_sep = "_",
+  values_to = "ParoleScore")
+
+# Change names if needed 
+data_main$Humanness <- recode_factor(data_main$Humanness, UH = 'Unique to humans', NonUH = 'Shared')
+data_main$Desirability <- recode_factor(data_main$Desirability, D = 'Desirable', UnD = 'Undesirable')  
+data_main$Study <- recode_factor(data_main$Study, "3A" = 'Study 3A: Testing for animalistic dehumanization', "3B" = 'Study 3B: Testing for mechanistic dehumanization') 
+
+#changing the names of the conditions 
+#Make data frames
+d.plot_main <- data_main %>% group_by(ID, Humanness, Desirability, Study) %>% summarise(M = mean(ParoleScore)) # creates data-frame of subject means
+
+# --- Animalistic plot (Left half)  ------
+d.plot_main$Humanness <- recode_factor(d.plot_main$Humanness, 'Unique to humans' = 'Uniquely human', Shared = 'Shared with other animals')
+
+
+plot_DMHARM3_Ani <- ggplot(d.plot_main, aes(x = Humanness, y = M, group = Desirability, fill = Desirability, color = Desirability)) + 
+  geom_bar(stat  = 'summary', fun = 'mean', alpha = 1, position = position_dodge(.9), width = .8) +
+  geom_point(position = position_jitterdodge(dodge.width = .9, jitter.width = 0.4), alpha = 0.5, size = 0.3) + 
+  stat_summary(fun.data = mean_se, geom = 'errorbar', color = 'black', width = .3, position = position_dodge(.9)) + 
+  scale_y_continuous(name = 'Mean support for parole (0-100)', breaks = seq(0, 100, 20), limits = c(0, 100)) + 
+  theme_light() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                        legend.position = "top", legend.text = element_text(size=14), legend.title = element_text(size = 14)) +
+  theme(axis.text=element_text(size = 14, colour = "black"), axis.title=element_text(size = 14)) + 
+  facet_wrap(~Study) + 
+  theme(strip.text = element_text(size = 14, colour = 'white'), strip.background = element_rect(fill = 'grey55')) +
+  scale_x_discrete(name = 'Trait humanness') +
+  scale_fill_manual(name = 'Trait desirability', values = c('azure1', 'seashell'), labels = c("Desirable", "Undesirable")) +
+  scale_color_manual(name  = 'Trait desirability', values = c('#1A85FF', '#D41159'), labels = c("Desirable", "Undesirable")) 
+plot_DMHARM3_Ani
+ggsave('figures/plot_DMHARM3_Ani.png', plot_DMHARM3_Ani, width = 12, height = 8, dpi = 300)
+
+image <- image_read("figures/plot_DMHARM3_Ani.png")
+
+# Get the dimensions of the image
+width <- image_info(image)$width
+height <- image_info(image)$height
+
+# Crop the left half of the image
+left_half1 <- image_crop(image, geometry_area(width = 1799, height = height, x_off = 0, y_off = 0))
+
+# Save the two halves
+image_write(left_half1, path = "figures/left_half1.jpg")
+#of if at work
+image_write(left_half1, path = "figures/left_half1.jpg")
+
+
+# --- Mechanistic plot (Right half)  ------
+d.plot_main$Humanness <- recode_factor(d.plot_main$Humanness, 'Uniquely human' = 'Human nature', 'Shared with other animals'
+                                       = 'Shared with robots')
+
+plot_DMHARM3_Mech <- ggplot(d.plot_main, aes(x = Humanness, y = M, group = Desirability, fill = Desirability, color = Desirability)) + 
+  geom_bar(stat  = 'summary', fun = 'mean', alpha = 1, position = position_dodge(.9), width = .8) +
+  geom_point(position = position_jitterdodge(dodge.width = .9, jitter.width = 0.4), alpha = 0.5, size = 0.3) + 
+  stat_summary(fun.data = mean_se, geom = 'errorbar', color = 'black', width = .3, position = position_dodge(.9)) + 
+  scale_y_continuous(name = 'Mean support for parole (0-100)', breaks = seq(0, 100, 20), limits = c(0, 100)) + 
+  theme_light() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                        legend.position = "top", legend.text = element_text(size=14), legend.title = element_text(size = 14)) +
+  theme(axis.text=element_text(size = 14, colour = "black"), axis.title=element_text(size = 14)) + 
+  facet_wrap(~Study) + 
+  theme(strip.text = element_text(size = 14, colour = 'white'), strip.background = element_rect(fill = 'grey55')) +
+  scale_x_discrete(name = 'Trait humanness') +
+  scale_fill_manual(name = 'Trait desirability', values = c('azure1', 'seashell'), labels = c("Desirable", "Undesirable")) +
+  scale_color_manual(name  = 'Trait desirability', values = c('#1A85FF', '#D41159'), labels = c("Desirable", "Undesirable")) 
+plot_DMHARM3_Mech
+ggsave('figures/plot_DMHARM3_Mech.png', plot_DMHARM3_Mech, width = 12, height = 8, dpi = 300)
+
+image2 <- image_read("figures/plot_DMHARM3_Mech.png")
+
+# Get the dimensions of the image
+width <- image_info(image2)$width
+height <- image_info(image2)$height
+
+# Crop the right half of the image
+right_half <- image_crop(image2, geometry_area(width = width, height = height, x_off = 1800, y_off = 0))
+
+# Save the right half
+image_write(right_half, path = "figures/right_half.jpg")
+
+# Merge into one plot ------------------------------------------------------------------------------
+# Load the two images
+imageA <- image_read("figures/left_half1.jpg")
+imageB <- image_read("figures/right_half.jpg")
+
+# Combine the images side by side
+Full_plot <- image_append(c(imageA, imageB), stack = FALSE)
+
+# Save the result
+image_write(Full_plot, path = "figures/plot3.jpg", format='jpeg')
+
+```
+
+```{r figure3, fig.cap="Results of Studies 3A and 3B.  Criminals described with undesirable traits were less likely to be granted parole than were those described with desirable traits, regardless of whether or not those traits were uniquely human.", fig.align="center", out.width='90%', echo=FALSE}
+
+knitr::include_graphics('figures/plot3.jpg')
+
+```
+
+# Study 3B
+
+Study 3B had an extremely similar design and method to Study 3A. We again employed an experimental manipulation in which we manipulated the perceived humanness and sociality of the traits with which criminals were described and measured how these descriptions influenced participants' parole decisions. In study 3B, we specifically tested for an influence of mechanistic dehumanization by including human nature traits and traits shared with robots in our measures.
+
+As in Study 3A, we predicted that criminals described with undesirable traits would be less likely to be granted parole than those described using desirable traits. 
+
+## Methods
+
+```{r 3bmethods, echo = FALSE}
+
+#read in data
+
+Study3B_Data <- read.csv('data/DMHARM_Study 3B_Mechanistic_data.csv', header = TRUE, stringsAsFactors = F)
+
+#calculate particpant mean/sd for ages
+
+age_mean3B <- mean(Study3B_Data$Age)
+age_sd3B <- sd(Study3B_Data$Age)
+
+#min and max ages
+
+min_age3B <- min(Study3B_Data$Age)
+max_age3B <- max(Study3B_Data$Age)
+
+#gender data
+
+gen_data3B <- table(Study3B_Data$Gender)
+
+```
+
+### Participants 
+
+The power analysis described in Study 3A also informed the sample size for Study 3B. A new sample of `r nrow(Study3B_Data)` participants was collected, of whom `r gen_data3B[1]` identified as female, `r gen_data3B[2]` as male, `r gen_data3B[3]` as non-binary, and `r gen_data3B[4]` did not indicate their gender identity. Ages ranged from `r min_age3B` to `r max_age3B` (*M* = `r round(age_mean3B, digits = 1)`, *SD* = `r round(age_sd3B, digits = 2)`). The inclusion criteria were identical to those used in Study 3A, including a minimum Prolific approval rating of 95%. Data from 35 participants were omitted and replaced due to failed attention checks. Five participants were mistakenly recruited after the intended sample size had been met, and thus, their data were excluded from analyses. Participation took an average of just under 7 minutes.
+
+### Materials
+
+The agreement with granting parole scale and attention check were the same as those used in Study 3A.
+
+**Vignettes**. All participants responded to the same four vignettes used in Study 3A but with somewhat different trait words. The desirable human words were *generous, openminded, warm*, and *kind*. The undesirable human words were *jealous, selfish, spiteful*, and *stingy*. The desirable traits shared with robots were *helpful, disciplined, calm* and *efficient*. The undesirable traits shared with robots were *cold, inflexible, superficial*, and *passive*. The following vignette is an example from the undesirable shared condition: 
+"*Sam is currently applying for parole after being convicted of a crime just over three years ago. In assessing Sam's suitability, the parole committee gathered reports from prison staff and other inmates. Guards patrolling the prison grounds noted Sam as being passive. Other prisoners mention Sam as exhibiting superficial behaviour with them for the most part. The prisoner who shares a cell with Sam has referred to them as the most inflexible cell-mate they have ever had. In last week's parole hearing, Sam's responses indicated a cold character*."
+
+### Design and procedure
+
+The design and procedure were identical to that of study 3A. 
+
+```{r study3bresults, echo = FALSE}
+
+#read in data
+
+Study3B_Data <- read.csv('data/DMHARM_Study 3B_Mechanistic_data.csv', header = TRUE, stringsAsFactors = F)
+
+#transform data for ANOVA
+
+Study3B_mod <- cbind(Study3B_Data[1:8], stack(Study3B_Data[9:12])) #put all DV in one column
+
+#insert columns to define conditions and levels
+
+des <- vector(mode = "list", length = 0 )
+hn <- vector(mode = "list", length = 0 )
+
+for (x in Study3B_mod$ind){
+  if (x == "HN.Desirable_Parole"){
+    des = c(des, 1);
+    hn = c(hn, 1)}
+  else if (x == "NonHN.Desirable_Parole"){
+    des = c(des, 1);
+    hn = c(hn,2)}
+  else if (x == "HN.Undesirable_Parole"){
+    des = c(des, 2);
+    hn = c(hn,1)}
+  else if (x == "NonHN.Undesirable_Parole"){
+    des = c(des, 2);
+    hn = c(hn,2)}
+}
+  
+Study3B_mod$des <- factor(des, 
+                          levels = c(1,2), 
+                          labels = c("Desirable", "Undesirable"))
+Study3B_mod$hn <- factor(hn, 
+                         levels = c(1,2), 
+                         labels = c("Human", "Non-Human"))
+
+#perform the ANOVA
+
+aov_3b <- aov_ez('CaseID',
+                 'values',
+                 Study3B_mod,
+                 within = c('des','hn'),
+                 anova_table = list('pes'))
+
+#neaten it (makes it easier to index in text)
+
+nice_3b <- nice(aov_3b, 
+                es = "pes", 
+                correction = "none",
+                sig_symbols = rep("",4))
+
+#descriptive statistics
+
+#means
+
+hn_des_mean <- mean(Study3B_Data$HN.Desirable_Parole)
+hn_undes_mean <- mean(Study3B_Data$HN.Undesirable_Parole)
+nonhn_des_mean <- mean(Study3B_Data$NonHN.Desirable_Parole)
+nonhn_undes_mean <- mean(Study3B_Data$NonHN.Undesirable_Parole)
+
+hn_mean <- (hn_des_mean + hn_undes_mean)/2
+nonhn_mean <- (nonhn_des_mean + nonhn_undes_mean)/2
+des_mean <- (hn_des_mean + nonhn_des_mean)/2
+undes_mean <- (hn_undes_mean + nonhn_undes_mean)/2
+
+#standard errors
+
+#calculate SEs
+
+hn_des_se <- se(Study3B_Data$HN.Desirable_Parole)
+hn_undes_se <- se(Study3B_Data$NonHN.Desirable_Parole)
+nonhn_des_se <- se(Study3B_Data$HN.Undesirable_Parole)
+nonhn_undes_se <- se(Study3B_Data$NonHN.Undesirable_Parole)
+
+hn_se <- se(Study3B_Data$HN.Desirable_Parole + Study3B_Data$HN.Undesirable_Parole)/2
+nonhn_se <- se(Study3B_Data$NonHN.Desirable_Parole + Study3B_Data$NonHN.Undesirable_Parole)/2
+des_se <- se(Study3B_Data$HN.Desirable_Parole + Study3B_Data$NonHN.Desirable_Parole)/2
+undes_se <- se(Study3B_Data$HN.Undesirable_Parole + Study3B_Data$NonHN.Undesirable_Parole)/2
+
+```
+
+## Results
+
+A $2 \times 2$ within-subjects ANOVA was conducted to examine how variations in trait humanness (human or shared with robots) and trait desirability (desirable or undesirable) influenced participants' parole decisions. As illustrated in Figure \@ref(fig:figure3), a significant main effect of trait desirability was found, *F*(`r nice_3b[1,2]`) = `r nice_3b[1,4]`, *p* = `r format.pval(nice_3b[1,6], digits = 3, eps = 0.001, nsmall = 3)`, $\eta_{p}^{2}$ = `r nice_3b[1,5]`. Criminals described using undesirable traits (*M* = `r round(undes_mean, digits = 1)`, *SE* = `r round(undes_se, digits = 2)`) were less likely to be granted parole than were criminals described using desirable traits (*M* = `r round(des_mean, digits = 1)`, *SE* = `r round(des_se, digits = 2)`).
+
+No significant main effect of trait humanness was found, *F*(`r nice_3b[2,2]`) = `r nice_3b[2,4]`, *p* = `r nice_3b[2,6]`, $\eta_{p}^{2}$ = `r nice_3b[2,5]`. Participants were no more likely to grant parole to criminals who were described using human traits (*M* = `r round(hn_mean, digits = 1)`, *SE* = `r round(hn_se, digits = 2)`) than those described using traits shared with robots (*M* = `r round(nonhn_mean, digits = 1)`, *SE* = `r round(nonhn_se, digits = 2)`). Unlike in Study 3A, no interaction effect between trait humanness and trait desirability was found, *F*(`r nice_3b[3,2]`) = `r nice_3b[3,4]`, *p* = `r nice_3b[3,6]`, $\eta_{p}^{2}$ = `r nice_3b[3,5]`.
+
+# General Discussion
+
+Across six highly powered and preregistered studies, we examined the hypothesised causal relationship between trait-based dehumanization and harm. The dual model of dehumanization [@Haslam2006] posits that individuals and groups are sometimes subtly dehumanized by being denied human character traits. To the extent that groups are dehumanized in this way, they are thought to be vulnerable to harm [see @Haslam2019; @Haslam2015]. The work of Bastian and colleagues [-@Bastian2013] is often cited in support of this claim. @Bastian2013 reported that the fewer human traits participants attributed to criminals, the harsher the punishments participants endorsed for them.
+
+We initially sought to replicate the dehumanization effect reported by Bastian and colleagues [-@Bastian2013] in a conceptually similar design. In Study 1A, we examined the relationship between animalistic and mechanistic dehumanization, as operationalised by Bastian and colleagues, and the harshness of punishment endorsed by participants. In both studies, we successfully replicated previous findings. This demonstrates that our paradigm is sensitive to finding predictive relationships between trait-based dehumanization and harm should they occur.
+
+In Studies 2A and 2B, we investigated the extent to which the previously reported relationship between trait-based dehumanization and harm can be explained by the social desirability of the traits incorporated into the stimulus set. The dual model [@Haslam2006] has previously been critiqued for failing to clearly distinguish evidence for trait-based dehumanization from evidence of negative evaluation [@Bloom2022; @Enock2021a; @Over2020a; -@Over2020b]. Bastian and colleagues [-@Bastian2013] operationalised animalistic dehumanization as a reduction in the extent to which participants viewed criminals as possessing traits such as sophistication and refinement. They operationalised mechanistic dehumanization as a reduction in the extent to which participants viewed criminals as possessing traits like warmth and depth. As each of these human traits is socially desirable, it is impossible to determine whether harm is predicted by dehumanization or negative evaluation. In order to tease apart the influence of dehumanization and negative evaluation in harm, we incorporated undesirable human traits into our stimulus set, for example, bitter and spiteful. If trait-based dehumanization explains harm, the previously reported relationship between dehumanization and punishment should remain even when undesirable human traits are incorporated into the stimulus set. If the previously reported relationship is better explained by negative evaluation, then trait desirability should moderate the relationship with punishment. In support of the latter claim, Studies 2A and 2B showed that the more desirable human traits participants attributed to criminals, the less harshly participants thought they should be punished. The more undesirable human traits participants attributed to criminals, the more harshly participants thought they should be punished.
+
+In Study 3, we sought to further distinguish between these two competing hypotheses using an experimental manipulation. In Studies 3A and 3B, we described criminals in traits that varied in perceived humanness and sociality and measured the influence of these varying descriptions on participants' parole decisions. This experimental design allowed us to directly test the hypothesised causal relationship between trait-based dehumanization and punishment. Converging with the findings of Study 2, we found that criminals described with undesirable traits were less likely to be granted parole than were criminals described with desirable traits, regardless of whether or not those traits were uniquely human. There was no evidence for the hypothesis that criminals described with uniquely human terms would be more likely to be granted parole.
+
+These findings fit with broader critiques of social psychological models of dehumanization. Enock and colleagues [-@Enock2021a] showed that what appears to be evidence for trait-based dehumanization of immigrants and political groups is better explained by negative evaluation. Similarly, @Enock2021b presented evidence that what appears to be emotion-based dehumanization of seven different outgroups is better explained by negative evaluation. In these studies, participants were more likely to attribute prosocial emotions to the ingroup regardless of whether they were uniquely human or not. Participants were more likely to attribute antisocial emotions to the outgroup, regardless of whether they were uniquely human or not. In further work, @Enock2022 presented evidence that the apparent relationship between emotion-based dehumanization and reductions in prosocial behaviour is better explained by negative evaluation.
+
+Partially in response to these critiques, @Kteily2022 presented a new social psychological model of dehumanization in which to dehumanize an individual or group is to perceive them as less than the ideal human. Under this characterisation of dehumanization, to view a group as possessing negative attributes is to dehumanize them. However, to define dehumanization in such a broad way as any negative evaluation renders almost all social judgments dehumanizing [@Bloom2022]. It seems unlikely that we dehumanize our closest and most loved kin simply by perceiving their imperfections. It is crucial that future conceptual research on dehumanization more clearly delineates dehumanization from negative evaluation [@Bloom2022; @Over2020a; -@Over2020b].
+
+It is important to acknowledge that we considered only one target group in this study - criminals. We based this decision on the influence the findings of @Bastian2013 have had on the literature. However, there may be more evidence for the hypothesised causal relationship between trait-based dehumanization and harm in other intergroup contexts. In addition to examining additional intergroup contexts, future research should also incorporate more trait terms into stimulus sets. Research on dehumanization has been critiqued for using relatively small stimulus sets [@Vaes2023]. Indeed, some studies have used a single trait term to assess dehumanization. For example, @Leidner2013 measured dehumanization by asking participants to rate the extent to which they agreed that members of the target outgroup experienced compassion. It will always remain possible that evidence for the causal relationship between dehumanization and harm could be found with a more sensitive paradigm.
+
+We are not trying to argue that trait-based dehumanization never occurs. Rather, our argument is considerably more modest. Taken in conjunction with other recent results, it is apparent that evidence for trait-based dehumanization has often been confounded with evidence for negative evaluation [@Bloom2022; @Enock2021a; @Enock2021b; @Over2020a; -@Over2020b]. The results of the current study add to this growing body of critiques by showing that the findings of @Bastian2013, often cited as key evidence for the claim that trait-based dehumanization leads to harm, are considerably less convincing than they first appear. It is imperative that future research tests whether there is evidence for trait-based dehumanization when trait desirability is controlled for, given the grave importance of understanding predictors of intergroup harm in the real world. 	
+
+# References
+
