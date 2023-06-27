@@ -212,7 +212,7 @@ plot(VHN_VHARM, 5, id.n = 7)
 # Residuals vs Leverage
 plot(VHN_VHARM, 5)
 
-#If you want to look at a scecific number of observations with the highest Cook’s distance to assess them further:
+#If you want to look at a spcecific number of observations with the highest Cook’s distance to assess them further:
 model1B.diag.metrics %>%
   top_n(9, wt = .cooksd)
 
@@ -325,7 +325,7 @@ The construct of dehumanization is often invoked to explain intergroup harm. In 
 
 # Introduction
 
-Understanding the motivations that lead to intergroup harm has been a driving force behind social psychology since its conception [@Farr1996; @Gaines1995]. Many psychological processes have been shown to exacerbate outgroup derogation, including prejudicial attitudes and stereotyping [@Dovidio2010; @Major2009]. Over the last 25 years, an increasing body of research has investigated the extent to which a psychological process of dehumanization increases the risk of intergroup harm [@Bloom2022; @Giner-Sorolla2021; @Goldenberg2021; @Lang2010; @Lang2020; @Manne2018; @Over2020a; @Over2020b; @Rai2017; @Ruiter2022; @Smith2021; @Vaes2020]. According to the dehumanization hypothesis, when members of an outgroup are perceived as less human than ingroup members, they are at greater risk of harm [@Haslam2019; @Haslam2014; @Haslam2015; @Smith2011; @Smith2016]. Subtle forms of dehumanization are thought to be pervasive in contemporary society. For example, the dehumanization of national groups [@Bain2011; @Leyens2003], religious groups [@Banton2020; @Leidner2013], individuals on a low income [@Loughnan2013], and refugees [@Bruneau2018; @Esses2008] has been reported in the literature.
+Understanding the motivations that lead to intergroup harm has been a driving force behind social psychology since its conception [@Farr1996; @Gaines1995]. Many psychological processes have been shown to exacerbate outgroup derogation, including prejudicial attitudes and stereotyping [@Dovidio2010; @Major2009]. Over the last 25 years, an increasing body of research has investigated the extent to which a psychological process of dehumanization increases the risk of intergroup harm [@Bloom2022; @Giner-Sorolla2021; @Goldenberg2021; @Lang2010; @Lang2020; @Manne2018; @Over2020a; @Over2020b; @Rai2017; @Ruiter2022; @Smith2011; @Smith2020; @Smith2021; @Vaes2020]. According to the dehumanization hypothesis, when members of an outgroup are perceived as less human than ingroup members, they are at greater risk of harm [@Haslam2019; @Haslam2014; @Haslam2015; @Smith2011; @Smith2016]. Subtle forms of dehumanization are thought to be pervasive in contemporary society. For example, the dehumanization of national groups [@Bain2011; @Leyens2003], religious groups [@Banton2020; @Leidner2013], individuals on a low income [@Loughnan2013], and refugees [@Bruneau2018; @Esses2008] has been reported in the literature.
 
 Within social psychology, several different characterisations of dehumanization have been proposed. Infrahumanization theory [@Leyens2000; @Leyens2001] posits that a subtle form of dehumanization occurs where outgroup members are viewed as experiencing uniquely human emotions such as pride and melancholy to a lesser extent than ingroup members. The mental state account maintains that outgroup members are dehumanized to the extent that they are denied mental states [@Gray2007; @Hare2020; @Harris2006].
 
