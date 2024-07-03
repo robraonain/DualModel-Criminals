@@ -12,7 +12,7 @@ header-includes:
 bibliography: references.bib
 link-citations: true
 linkcolor: black
-csl: apa-6th-edition.csl
+csl: apa-7th-edition.csl
 ---
 
 ```{r setup, include=FALSE}
