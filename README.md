@@ -2,7 +2,7 @@
 
 These materials are a computationally reproducible version of the paper:
 
-Brennan, R.A., Enock, F.E. & Over, H. (2023). Attribution of undesirable character traits, rather than trait-based dehumanization, predicts punishment decisions.
+Brennan, R.A., Enock, F.E. & Over, H. (2024). Attribution of undesirable character traits, rather than trait-based dehumanization, predicts punishment decisions. Royal Society Open Science, 11: 240087. https://doi.org/10.1098/rsos.240087
 
 The file manuscript.Rmd is an R markdown file that will perform all analyses and figure creation, and produce a pdf version of the manuscript.
 
